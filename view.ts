@@ -70,6 +70,8 @@ export class UniversityView extends ItemView
         await this._generateCurrentFolderIfNotExists();
         const container = this.containerEl.children[1];
         container.empty();
+        if (!container.classList.contains('university-view-container'))
+            container.addClass('university-view-container');
 
         if (this._semesterOptions.length != this._plugin.settings.semesters)
         {
@@ -168,6 +170,8 @@ export class UniversityView extends ItemView
         combobox.addEventListener('change', (event)=>{
             listener(event, combobox.selectedIndex, options[combobox.selectedIndex]);
         });
+
+        combobox.addClass("university-combobox")
 
         return combobox;
     }
