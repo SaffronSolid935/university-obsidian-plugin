@@ -6,3 +6,40 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.university-navbar-parent {
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    width: 100%;
+}
+
+.university-navbar-child label, .university-navbar-child-active label{
+    position: absolute;
+    left: 50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+}
+
+.university-navbar-child, .university-navbar-child-active{
+    --margin: 0.01em;
+    display: inline-block;
+    position: relative;
+    width: calc(100% / 3 - var(--margin) * 2);
+    height: 2em;
+    margin: var(--margin);
+    margin-top: 3em;
+    /* text-align: center; */
+    border-bottom: 0.2em solid;
+    border-bottom-color: rgba(255,255,255,0,5);
+}
+
+.university-navbar-child
+{
+    background-color: rgba(0,0,0,0);
+}
+
+.university-navbar-child-active
+{
+    background-color: rgba(0,0,0,0.2);
+}
