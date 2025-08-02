@@ -1,37 +1,50 @@
 import UnivresityPlugin from 'main';
-import { ItemView, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import { ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
+const NOTES = 'notes';
 export const VIEW_UNIVERSITY = 'University';
 
 interface NavbarData 
 {
     id: string;
     label: string;
-    onClick: (id: string) => any;
+    onClick: (documentSection: DocumentSection) => any;
     element: HTMLLIElement | null;
+    documentSection: DocumentSection
+}
+
+enum DocumentSection
+{  
+    Notes,
+    Lectures,
+    Readings
 }
 
 export class UniversityView extends ItemView
 {
+    _currentDocumentSection: DocumentSection = DocumentSection.Notes;
 
     _navbarData: Array<NavbarData> = [
         {
-            id: 'notes',
+            id: NOTES,
             label: 'Notes',
-            onClick: (id) => this._onNavbarClick(id),
-            element: null
+            onClick: (id) => {this._onNavbarClick(id)},
+            element: null,
+            documentSection: DocumentSection.Notes
         },
         {
             id: 'lectures',
             label: 'Lectures',
-            onClick: (id) => this._onNavbarClick(id),
-            element: null
+            onClick: (id) => {this._onNavbarClick(id)},
+            element: null,
+            documentSection: DocumentSection.Lectures
         },
         {
             id: 'readings',
             label: 'Readings',
-            onClick: (id) => this._onNavbarClick(id),
-            element: null
+            onClick: (id) => {this._onNavbarClick(id)},
+            element: null,
+            documentSection: DocumentSection.Readings
         }
     ];
 
@@ -104,10 +117,84 @@ export class UniversityView extends ItemView
 
         await this.generateNavBar(container);
 
+        console.log("Doc: " + this._currentDocumentSection);
+        switch (this._currentDocumentSection)
+        {
+            case DocumentSection.Notes:
+                await this.generateNotesSection(container);
+                break;
+            case DocumentSection.Lectures:
+                await this.generateLecturesSection(container);
+                break;
+            case DocumentSection.Readings:
+                await this.generateReadingsSection(container);
+                break;
+        }
+
 
         // container.createEl('h4',{text:'sd'});
         // var button = container.createEl('button',{text:'hello world'});
         // button.addEventListener("click", () => this.click());
+    }
+
+    async createSubFolgerIfNotExists(sub: string) : Promise<string>
+    {
+        const path = this._getSubModulePath(
+            this._plugin.settings.currentSemester,
+            this._plugin.settings.lastSelectedModuleIndex,
+            sub
+        );
+        const adapter = this.app.vault.adapter;
+        if (!(await adapter.exists(path)))
+        {
+            this.app.vault.createFolder(path);
+        }
+        return path;
+    }
+
+    async generateNotesSection(container: Element)
+    {
+        const notesPath = await this.createSubFolgerIfNotExists(NOTES);
+        const files = this.app.vault.getFolderByPath(notesPath)?.children;
+
+        let div = container.createDiv();
+        div.addClass('university-notes-div');
+
+        let button = container.createEl('button',{text:'Create'});
+        button.addClass("university-notes-create-button");
+        button.addEventListener('click',(event)=>{
+            this.createNote();
+        });
+    }
+
+    async generateLecturesSection(container: Element)
+    {
+        
+    }
+
+    async generateReadingsSection(container: Element)
+    {
+        
+    }
+
+    async createNote()
+    {
+        const path = await this._plugin.noteFileCreator.createFile(this._getSubModulePath(
+            this._plugin.settings.currentSemester,
+            this._plugin.settings.lastSelectedModuleIndex,
+            NOTES
+        ));
+        const file = this.app.vault.getFileByPath(path);
+        console.log(`File: ${file} - ${typeof(file)} - ${file instanceof TFile} - ${file instanceof TAbstractFile}`);
+        if (file && file instanceof TFile)
+        {
+            await this.app.workspace.getLeaf().openFile(file);
+        }
+        else
+        {
+            new Notice(`File "${path}" not found.`);
+        }
+        await this.onOpen();
     }
 
     async generateNavBar(container: Element)
@@ -119,28 +206,43 @@ export class UniversityView extends ItemView
             let navbarOption = navbar.createEl('li');
             navbarOption.createEl('label',{text:navbarItem.label});
             navbarOption.addClass('university-navbar-child');
-            navbarOption.addEventListener('click',(event)=>navbarItem.onClick(navbarItem.id));
+            navbarOption.addEventListener('click',(event)=>{navbarItem.onClick(navbarItem.documentSection)});
             this._navbarData[index].element = navbarOption;
         });
 
-        this._onNavbarClick(this._navbarData.first()!.id);
+        this._navbarData.forEach((value) => {
+            if (value.documentSection == this._currentDocumentSection)
+            {
+            }
+            if (value.element != null)
+            value.element.className = value.documentSection == this._currentDocumentSection ? 'university-navbar-child-active' : 'university-navbar-child';
+        });
 
 
     }
 
-    _onNavbarClick(id: string)
+    _onNavbarClick(documentSection: DocumentSection)
     {
-        new Notice(`${id} selected`);
-        let navbarItem = this._getNavbarItem(id);
-        if (navbarItem != null)
-        {
-            this._navbarData.forEach((value, index)=>{
-                if (value.element != null)
-                {
-                    value.element.className = value.id == id ? 'university-navbar-child-active' : 'university-navbar-child';
-                }
-            });
-        }
+        // new Notice(`${id} selected`);
+        // let navbarItem = this._getNavbarItem(id);
+        // if (navbarItem != null)
+        // {
+        //     this._navbarData.forEach((value, index)=>{
+        //         if (value.element != null)
+        //         {
+        //             value.element.className = value.id == id ? 'university-navbar-child-active' : 'university-navbar-child';
+        //         }
+        //         if (value.id == id)
+        //         {
+                    this._currentDocumentSection = documentSection;
+            //         console.log("1");
+            //     }
+            // });
+            // console.log("2");
+            // if (click)
+                this.onOpen();
+        // }
+
     }
 
     _getNavbarItem(id: string):NavbarData | null
@@ -229,6 +331,11 @@ export class UniversityView extends ItemView
     _getModulePath(semester: number, module: number): string
     {
         return `${this._getSemesterPath(semester)}/${this._plugin.settings.modules[semester][module]}`;
+    }
+
+    _getSubModulePath(semester: number, module: number, sub: string)
+    {
+        return `${this._getModulePath(semester,module)}/${sub}`;
     }
 
     async onClose() {

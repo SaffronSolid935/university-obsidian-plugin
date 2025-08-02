@@ -1,15 +1,26 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
 
 .university-view-container
 {
+    --university-view-padding: 1em;
+    padding:var(--university-view-padding);
     display: block;
+    overflow: hidden;
+}
+
+.university-notes-create-button
+{
+    position: absolute;
+    left: 50%;
+    bottom: var(--university-view-padding);
+    width: calc(100% - var(--university-view-padding) * 2);
+    transform: translate(-50%,0);
+}
+.university-notes-div
+{
+    width: 100%;
+    height: calc(100% - var(--university-view-padding) * 2 - 2em * 4); /*just an estimate*/
+    scroll-behavior: auto;
+    background-color: red;
 }
 
 .university-combobox{
@@ -52,5 +63,8 @@ If your plugin does not need CSS, delete this file.
 
 .university-navbar-child-active
 {
+    --university-navbar-item-radius: 0.5em;
     background-color: rgba(0,0,0,0.2);
+    border-top-left-radius: var(--university-navbar-item-radius);
+    border-top-right-radius: var(--university-navbar-item-radius);
 }

@@ -1,6 +1,7 @@
-import {Notice, Plugin, WorkspaceLeaf} from 'obsidian';
+import {App, Notice, Plugin, PluginManifest, WorkspaceLeaf} from 'obsidian';
 import { UniversityView, VIEW_UNIVERSITY } from 'view';
 import { DEFAULT_SETTINGS, UniversityPluginSettings, UniversitySettingsTab } from 'settings';
+import { NoteFileCreator } from 'files/note';
 // import navbarCSS from "./styles/navbar.css";
 
 // const STYLESHEETS: Array<string> = [
@@ -10,6 +11,14 @@ import { DEFAULT_SETTINGS, UniversityPluginSettings, UniversitySettingsTab } fro
 export default class UnivresityPlugin extends Plugin
 {
     settings: UniversityPluginSettings;
+    noteFileCreator: NoteFileCreator;
+
+    constructor(app: App, manifest: PluginManifest)
+    {
+        super(app, manifest);
+        this.noteFileCreator = new NoteFileCreator(this);
+    }
+
     async onload()
     {
         await this.loadSettings();

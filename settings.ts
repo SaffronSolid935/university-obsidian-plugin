@@ -3,6 +3,7 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 
 export interface UniversityPluginSettings
 {
+    timeformat: string,
     semesters: number;
     currentSemester: number;
     lastSelectedModuleIndex: number;
@@ -10,6 +11,7 @@ export interface UniversityPluginSettings
 }
 
 export const DEFAULT_SETTINGS: UniversityPluginSettings = {
+    timeformat: 'en-EN',
     semesters: 6,
     currentSemester: 0,
     lastSelectedModuleIndex: 0,
@@ -34,6 +36,19 @@ export class UniversitySettingsTab extends PluginSettingTab {
         const {containerEl} = this;
 
         containerEl.empty();
+
+        new Setting(containerEl)
+            .setName('Locale')
+            .setDesc('This is used for the date- & timeformat.')
+            .addText(text => text
+                .setPlaceholder('en-EN')
+                .setValue(this.plugin.settings.timeformat)
+                .onChange( async (value)=>{
+                    this.plugin.settings.timeformat = value;
+                    await this.plugin.saveSettings();
+                })
+            );
+
         new Setting(containerEl)
             .setName('Semesters')
             .setDesc('The number of semesters you have')
@@ -47,47 +62,47 @@ export class UniversitySettingsTab extends PluginSettingTab {
                 })
             );
 
-            containerEl.createEl('h2',{text:'Modules'});
+        containerEl.createEl('h2',{text:'Modules'});
 
-            this.plugin.settings.modules = this.resizeArray(this.plugin.settings.modules, this.plugin.settings.semesters);
-            for (var i = 0; i < this.plugin.settings.modules.length; i++)
+        this.plugin.settings.modules = this.resizeArray(this.plugin.settings.modules, this.plugin.settings.semesters);
+        for (var i = 0; i < this.plugin.settings.modules.length; i++)
+        {
+            if (this.plugin.settings.modules[i] == null)
             {
-                if (this.plugin.settings.modules[i] == null)
-                {
-                    this.plugin.settings.modules[i] = [];
-                    this.plugin.saveSettings();
-                }
+                this.plugin.settings.modules[i] = [];
+                this.plugin.saveSettings();
             }
-        
-            this.plugin.settings.modules.forEach((modulesInSemester, i)=>{
-                containerEl.createEl('h3',{text:`Semester ${i + 1}`});
+        }
+    
+        this.plugin.settings.modules.forEach((modulesInSemester, i)=>{
+            containerEl.createEl('h3',{text:`Semester ${i + 1}`});
+            new Setting(containerEl)
+                .setName('Modules count')
+                .addText(text => text
+                    .setPlaceholder('6')
+                    .setValue(modulesInSemester.length.toString())
+                    .onChange( async (value) => {
+                        let newLength = await this.settingToNumber(value);
+                        let newArray = this.resizeArray<string>(modulesInSemester,newLength);
+                        this.plugin.settings.modules[i] = newArray;
+                        this.plugin.saveSettings();
+                        this.display();
+                    })
+                );
+
+            modulesInSemester.forEach((module, j) => {
                 new Setting(containerEl)
-                    .setName('Modules count')
+                    .setName(`#${j + 1}`)
                     .addText(text => text
-                        .setPlaceholder('6')
-                        .setValue(modulesInSemester.length.toString())
+                        .setPlaceholder('Module name')
+                        .setValue(module)
                         .onChange( async (value) => {
-                            let newLength = await this.settingToNumber(value);
-                            let newArray = this.resizeArray<string>(modulesInSemester,newLength);
-                            this.plugin.settings.modules[i] = newArray;
+                            this.plugin.settings.modules[i][j] = value;
                             this.plugin.saveSettings();
-                            this.display();
                         })
                     );
-
-                modulesInSemester.forEach((module, j) => {
-                    new Setting(containerEl)
-                        .setName(`#${j + 1}`)
-                        .addText(text => text
-                            .setPlaceholder('Module name')
-                            .setValue(module)
-                            .onChange( async (value) => {
-                                this.plugin.settings.modules[i][j] = value;
-                                this.plugin.saveSettings();
-                            })
-                        );
-                });
             });
+        });
     }
 
     async settingToNumber(value: string, defaultValue: number = -1) : Promise<number> {
