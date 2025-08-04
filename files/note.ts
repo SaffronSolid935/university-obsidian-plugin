@@ -1,22 +1,24 @@
 
 import UnivresityPlugin from "main";
+import { MetaHandler } from "./metaHandler";
+import { App } from "obsidian";
 
-export class NoteFileCreator
+export class NoteFileCreator extends MetaHandler
 {
-    _plugin: UnivresityPlugin;
 
-    constructor(plugin: UnivresityPlugin)
+    constructor(app: App, plugin: UnivresityPlugin)
     {
-        this._plugin = plugin;
+        super(app, plugin);
     }
 
     async createFile(folderPath: string) : Promise<string>
     {
-        const vault = this._plugin.app.vault;
+        const vault = this.app.vault;
 
         const date = new Date();
 
-        const rawDate = date.toLocaleDateString(this._plugin.settings.timeformat);
+        const rawDate = date.toISOString().split('T')[0];
+        console.log("Raw: " + rawDate);
 
         const path = `${folderPath}/note_${rawDate}.md`;
 
@@ -24,9 +26,9 @@ export class NoteFileCreator
         {
             const content  =
 `---
-Timestamp: ${date.toLocaleString(this._plugin.settings.timeformat)}
-Semester: ${this._plugin.settings.currentSemester + 1}
-Module: ${this._plugin.settings.modules[this._plugin.settings.currentSemester][this._plugin.settings.lastSelectedModuleIndex]}
+Timestamp: ${date.toLocaleString(this.plugin.settings.timeformat)}
+Semester: ${this.plugin.settings.currentSemester + 1}
+Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][this.plugin.settings.lastSelectedModuleIndex]}
 ---
 `;
             await vault.create(path,content);

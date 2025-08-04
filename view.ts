@@ -1,10 +1,10 @@
 import UnivresityPlugin from 'main';
-import { ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
+import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
 const NOTES = 'notes';
 export const VIEW_UNIVERSITY = 'University';
 
-interface NavbarData 
+interface INavbarData 
 {
     id: string;
     label: string;
@@ -20,11 +20,20 @@ enum DocumentSection
     Readings
 }
 
+interface IFileData
+{
+    name: string;
+    filename: string;
+    path: string;
+    date: Date | undefined;
+    abstractFile: TAbstractFile;
+}
+
 export class UniversityView extends ItemView
 {
     _currentDocumentSection: DocumentSection = DocumentSection.Notes;
 
-    _navbarData: Array<NavbarData> = [
+    _navbarData: Array<INavbarData> = [
         {
             id: NOTES,
             label: 'Notes',
@@ -152,13 +161,72 @@ export class UniversityView extends ItemView
         return path;
     }
 
+    sortFileListByDate(files: Array<TAbstractFile> | undefined, usePrefix: boolean, prefix: string = '', postfix: string = '') : Array<IFileData>
+    {
+        if (files == undefined)
+        {
+            return [];
+        }
+
+        let sortedArray: Array<IFileData> = [];
+
+        files.forEach((file)=>{
+            let data: IFileData = 
+            {
+                filename: file.name,
+                name: file.name,
+                abstractFile: file,
+                path: file.path,
+                date: undefined
+            };
+
+            if (usePrefix)
+            {
+                if (file.name.startsWith(prefix) && file.name.endsWith(postfix))
+                {
+                    const rawDate = file.name.substring(prefix.length, file.name.length - postfix.length);
+                    data.date = new Date(rawDate);
+                }
+            }
+
+            sortedArray.push(data);
+        });
+
+        sortedArray.sort((a, b) => {
+            const dateA = a.date ? new Date(a.date) : null;
+            const dateB = b.date ? new Date(b.date) : null;
+
+            if (dateA && dateB) {
+                return dateB.getDate() - dateA.getDate(); // Newest first
+            } else if (dateA) {
+                return -1; // a has a date, b doesn't => a comes first
+            } else if (dateB) {
+                return 1; // b has a date, a doesn't => b comes first
+            } else {
+                return 0; // both don't have dates => no change
+            }
+            });
+        return sortedArray;
+    }
+
     async generateNotesSection(container: Element)
     {
         const notesPath = await this.createSubFolgerIfNotExists(NOTES);
         const files = this.app.vault.getFolderByPath(notesPath)?.children;
+        const fileData = this.sortFileListByDate(
+            files,
+            true,
+            `note_`,
+            '.md'
+        );
 
         let div = container.createDiv();
         div.addClass('university-notes-div');
+
+        fileData.forEach((value)=>{
+            div.createEl('button',{text:value.date != undefined ? value.date.toISOString().split('T')[0] : value.name});
+        });
+
 
         let button = container.createEl('button',{text:'Create'});
         button.addClass("university-notes-create-button");
@@ -245,7 +313,7 @@ export class UniversityView extends ItemView
 
     }
 
-    _getNavbarItem(id: string):NavbarData | null
+    _getNavbarItem(id: string):INavbarData | null
     {
         for (var i = 0; i < this._navbarData.length; i++)
         {
