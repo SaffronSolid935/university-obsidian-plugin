@@ -23,6 +23,13 @@
     background-color: red;
 }
 
+.university-notes-div button
+{
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25em;
+}
+
 .university-combobox{
     display: block;
     width: 100%;

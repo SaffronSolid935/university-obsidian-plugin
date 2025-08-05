@@ -130,6 +130,7 @@ export class UniversityView extends ItemView
         switch (this._currentDocumentSection)
         {
             case DocumentSection.Notes:
+                this._plugin.noteFileCreator.setPath(this._getSubModulePath(NOTES))
                 await this.generateNotesSection(container);
                 break;
             case DocumentSection.Lectures:
@@ -148,11 +149,7 @@ export class UniversityView extends ItemView
 
     async createSubFolgerIfNotExists(sub: string) : Promise<string>
     {
-        const path = this._getSubModulePath(
-            this._plugin.settings.currentSemester,
-            this._plugin.settings.lastSelectedModuleIndex,
-            sub
-        );
+        const path = this._getSubModulePath(sub);
         const adapter = this.app.vault.adapter;
         if (!(await adapter.exists(path)))
         {
@@ -160,71 +157,16 @@ export class UniversityView extends ItemView
         }
         return path;
     }
-
-    sortFileListByDate(files: Array<TAbstractFile> | undefined, usePrefix: boolean, prefix: string = '', postfix: string = '') : Array<IFileData>
-    {
-        if (files == undefined)
-        {
-            return [];
-        }
-
-        let sortedArray: Array<IFileData> = [];
-
-        files.forEach((file)=>{
-            let data: IFileData = 
-            {
-                filename: file.name,
-                name: file.name,
-                abstractFile: file,
-                path: file.path,
-                date: undefined
-            };
-
-            if (usePrefix)
-            {
-                if (file.name.startsWith(prefix) && file.name.endsWith(postfix))
-                {
-                    const rawDate = file.name.substring(prefix.length, file.name.length - postfix.length);
-                    data.date = new Date(rawDate);
-                }
-            }
-
-            sortedArray.push(data);
-        });
-
-        sortedArray.sort((a, b) => {
-            const dateA = a.date ? new Date(a.date) : null;
-            const dateB = b.date ? new Date(b.date) : null;
-
-            if (dateA && dateB) {
-                return dateB.getDate() - dateA.getDate(); // Newest first
-            } else if (dateA) {
-                return -1; // a has a date, b doesn't => a comes first
-            } else if (dateB) {
-                return 1; // b has a date, a doesn't => b comes first
-            } else {
-                return 0; // both don't have dates => no change
-            }
-            });
-        return sortedArray;
-    }
-
     async generateNotesSection(container: Element)
     {
         const notesPath = await this.createSubFolgerIfNotExists(NOTES);
-        const files = this.app.vault.getFolderByPath(notesPath)?.children;
-        const fileData = this.sortFileListByDate(
-            files,
-            true,
-            `note_`,
-            '.md'
-        );
+        const files = await this._plugin.noteFileCreator.getFilesAsync();
 
         let div = container.createDiv();
         div.addClass('university-notes-div');
 
-        fileData.forEach((value)=>{
-            div.createEl('button',{text:value.date != undefined ? value.date.toISOString().split('T')[0] : value.name});
+        files.forEach((value)=>{
+            div.createEl('button',{text:value.label});
         });
 
 
@@ -247,22 +189,25 @@ export class UniversityView extends ItemView
 
     async createNote()
     {
-        const path = await this._plugin.noteFileCreator.createFile(this._getSubModulePath(
-            this._plugin.settings.currentSemester,
-            this._plugin.settings.lastSelectedModuleIndex,
-            NOTES
-        ));
-        const file = this.app.vault.getFileByPath(path);
-        console.log(`File: ${file} - ${typeof(file)} - ${file instanceof TFile} - ${file instanceof TAbstractFile}`);
-        if (file && file instanceof TFile)
+        const path = await this._plugin.noteFileCreator.createFileAsync();
+        if (path)
         {
-            await this.app.workspace.getLeaf().openFile(file);
+            const file = this.app.vault.getFileByPath(path);
+            console.log(`File: ${path} -> ${file} - ${typeof(file)} - ${file instanceof TFile} - ${file instanceof TAbstractFile}`);
+            if (file && file instanceof TFile)
+            {
+                await this.app.workspace.getLeaf().openFile(file);
+            }
+            else
+            {
+                new Notice(`File "${path}" not found. (201b)`);
+            }
+            await this.onOpen();
+            return;
         }
-        else
-        {
-            new Notice(`File "${path}" not found.`);
-        }
-        await this.onOpen();
+        console.log("paht: " , path);
+
+        new Notice('Error - 201');
     }
 
     async generateNavBar(container: Element)
@@ -348,10 +293,7 @@ export class UniversityView extends ItemView
 
     async _generateCurrentFolderIfNotExists()
     {   
-        const path = this._getModulePath(
-            this._plugin.settings.currentSemester,
-            this._plugin.settings.lastSelectedModuleIndex
-        );
+        const path = this._getModulePath();
         const adapter = this.app.vault.adapter;
         if (!(await adapter.exists(path)))
         {
@@ -366,7 +308,7 @@ export class UniversityView extends ItemView
         this._plugin.saveSettings();
         new Notice(`Semester ${index + 1} selected`);
 
-        const path = this._getSemesterPath(index);
+        const path = this._getSemesterPath();
 
         const adapter = this.app.vault.adapter;
 
@@ -381,7 +323,7 @@ export class UniversityView extends ItemView
         this._plugin.settings.lastSelectedModuleIndex = index;
         this._plugin.saveSettings();
 
-        const path = this._getModulePath(this._plugin.settings.currentSemester,index);
+        const path = this._getModulePath();
 
         const adapter = this.app.vault.adapter;
 
@@ -391,19 +333,19 @@ export class UniversityView extends ItemView
         }
     }
 
-    _getSemesterPath(semester: number) : string
+    _getSemesterPath() : string
     {
-        return `Semester ${semester + 1}`;
+        return `Semester ${this._plugin.settings.currentSemester + 1}`;
     }
 
-    _getModulePath(semester: number, module: number): string
+    _getModulePath(): string
     {
-        return `${this._getSemesterPath(semester)}/${this._plugin.settings.modules[semester][module]}`;
+        return `${this._getSemesterPath()}/${this._plugin.settings.modules[this._plugin.settings.currentSemester][this._plugin.settings.lastSelectedModuleIndex]}`;
     }
 
-    _getSubModulePath(semester: number, module: number, sub: string)
+    _getSubModulePath(sub: string)
     {
-        return `${this._getModulePath(semester,module)}/${sub}`;
+        return `${this._getModulePath()}/${sub}`;
     }
 
     async onClose() {

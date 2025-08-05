@@ -16,7 +16,7 @@ export default class UnivresityPlugin extends Plugin
     constructor(app: App, manifest: PluginManifest)
     {
         super(app, manifest);
-        this.noteFileCreator = new NoteFileCreator(this);
+        this.noteFileCreator = new NoteFileCreator(app, this);
     }
 
     async onload()
