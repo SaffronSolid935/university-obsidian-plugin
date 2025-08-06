@@ -1,3 +1,4 @@
+import { MetaHandler } from 'files/metaHandler';
 import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
@@ -86,6 +87,18 @@ export class UniversityView extends ItemView
             this._semesterOptions.push(`Semester ${i + 1}`);
         }
     }
+
+    async createSubFolderIfNotExists(sub: string) : Promise<string>
+    {
+        const path = this._getSubModulePath(sub);
+        const adapter = this.app.vault.adapter;
+        if (!(await adapter.exists(path)))
+        {
+            this.app.vault.createFolder(path);
+        }
+        return path;
+    }
+
         
     async onOpen()
     {
@@ -130,8 +143,16 @@ export class UniversityView extends ItemView
         switch (this._currentDocumentSection)
         {
             case DocumentSection.Notes:
-                this._plugin.noteFileCreator.setPath(this._getSubModulePath(NOTES))
-                await this.generateNotesSection(container);
+                const sectionPath = await this.createSubFolderIfNotExists(NOTES);
+                this._plugin.noteFileCreator.setPath(sectionPath);
+                await this.generateFileSection(container,this._plugin.noteFileCreator,async ()=>{
+                    const path = await this._plugin.noteFileCreator.createFileAsync();
+
+                    if (path)
+                    {
+                        const opened = await this._plugin.noteFileCreator.openFileInEditor(path)
+                    }
+                });
                 break;
             case DocumentSection.Lectures:
                 await this.generateLecturesSection(container);
@@ -146,20 +167,43 @@ export class UniversityView extends ItemView
         // var button = container.createEl('button',{text:'hello world'});
         // button.addEventListener("click", () => this.click());
     }
-
-    async createSubFolgerIfNotExists(sub: string) : Promise<string>
+    async generateFileSection(container: Element, fileCreator: MetaHandler, fileCreateMethod: (event: MouseEvent)=>any)
     {
-        const path = this._getSubModulePath(sub);
-        const adapter = this.app.vault.adapter;
-        if (!(await adapter.exists(path)))
-        {
-            this.app.vault.createFolder(path);
-        }
-        return path;
+
+        const files = await fileCreator.getFilesAsync();
+
+        const div = container.createDiv();
+        div.addClass('university-notes-div');
+
+        files.forEach((value)=>{
+            let button = div.createEl('button',{text:value.label});
+            button.addEventListener('click',async ()=>{
+                var opened = await fileCreator.openFileInEditor(value.path);
+                if (!opened)
+                {
+                    console.error(`File ${value.path} not found (code: 204).`);
+                    new Notice(`File '${value.name}' not found (204).`);
+                }
+            });
+
+            button.addEventListener('mouseup',async (event)=>{
+                var opened = await fileCreator.openFileInEditor(value.path, false);
+                if (!opened)
+                {
+                    console.error(`File ${value.path} not found (code: 204b).`);
+                    new Notice(`File '${value.name}' not found (204b).`);
+                }
+            });
+        });
+
+        const button = container.createEl('button',{text:'Create new note'});
+        button.addClass('university-notes-create-button');
+        button.addEventListener('click',fileCreateMethod);
     }
+
     async generateNotesSection(container: Element)
     {
-        const notesPath = await this.createSubFolgerIfNotExists(NOTES);
+        const notesPath = await this.createSubFolderIfNotExists(NOTES);
         const files = await this._plugin.noteFileCreator.getFilesAsync();
 
         let div = container.createDiv();

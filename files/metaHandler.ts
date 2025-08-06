@@ -46,7 +46,6 @@ export class MetaHandler
     {
         this.app = app;
         this.plugin = plugin;
-        console.log("Hey: " + init);
         if (init)
         {
             // this.setDefaultMeta();

@@ -9,3 +9,5 @@
 | 201  | File already exists. |
 | 201  | File could not be created. Return value is null. |
 | 201b | Error with the file path |
+| 204 | File not found | 
+| 204b | File not found while trying to open in a new tab | 
