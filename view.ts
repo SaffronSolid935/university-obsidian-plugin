@@ -166,7 +166,17 @@ export class UniversityView extends ItemView
         div.addClass('university-notes-div');
 
         files.forEach((value)=>{
-            div.createEl('button',{text:value.label});
+            let button = div.createEl('button',{text:value.label});
+            button.addEventListener('click',(event)=>{
+                this._plugin.noteFileCreator.openFileInEditor(value.path);
+            });
+            button.addEventListener('mouseup',(event)=>{
+                if (event.button === 1)
+                {
+                    event.preventDefault();
+                    this._plugin.noteFileCreator.openFileInEditor(value.path,false);
+                }
+            });
         });
 
 
@@ -192,13 +202,7 @@ export class UniversityView extends ItemView
         const path = await this._plugin.noteFileCreator.createFileAsync();
         if (path)
         {
-            const file = this.app.vault.getFileByPath(path);
-            console.log(`File: ${path} -> ${file} - ${typeof(file)} - ${file instanceof TFile} - ${file instanceof TAbstractFile}`);
-            if (file && file instanceof TFile)
-            {
-                await this.app.workspace.getLeaf().openFile(file);
-            }
-            else
+            if (!this._plugin.noteFileCreator.openFileInEditor(path))
             {
                 new Notice(`File "${path}" not found. (201b)`);
             }

@@ -20,7 +20,7 @@
     width: 100%;
     height: calc(100% - var(--university-view-padding) * 2 - 2em * 4); /*just an estimate*/
     scroll-behavior: auto;
-    background-color: red;
+    /* background-color: red; */
 }
 
 .university-notes-div button

@@ -1,5 +1,5 @@
 import UnivresityPlugin from "main";
-import { App, TFile, Vault } from "obsidian";
+import { App, PaneType, TFile, Vault, WorkspaceLeaf } from "obsidian";
 import { stringify } from "querystring";
 
 const METADATA_FILE = 'meta.json';
@@ -127,5 +127,28 @@ export class MetaHandler
     async getFilesAsync(): Promise<Array<TAdvancedFile>>
     {
         return [];
+    }
+
+    async openFileInEditor(path: string, replaceLeaf: boolean = true) : Promise<boolean>
+    {
+        const file = this.app.vault.getFileByPath(path);
+        if (!file || !(file instanceof TFile))
+        {
+            return false;
+        }
+        const workspace = this.app.workspace;
+        let leaf: WorkspaceLeaf;
+        if (replaceLeaf)
+        {
+            leaf = workspace.getLeaf();
+        }
+        else
+        {
+            leaf = workspace.getLeaf(true);
+        }
+
+        leaf.openFile(file);
+
+        return true;
     }
 }
