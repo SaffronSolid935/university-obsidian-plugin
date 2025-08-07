@@ -1,11 +1,13 @@
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
 
-export const IMPORTER_POPUP_VIEW = "file-importer";
+export const VIEW_IMPORTER = "file-importer";
 
 export class ImporterPopUpView extends ItemView
 {
     protected title: string;
-    protected sourcePath: string;
+    protected fileNameInput: HTMLInputElement;
+    protected file: File;
+
     constructor(leaf: WorkspaceLeaf)
     {
         super(leaf);
@@ -13,7 +15,7 @@ export class ImporterPopUpView extends ItemView
     }
 
     getViewType(): string {
-        return IMPORTER_POPUP_VIEW;
+        return VIEW_IMPORTER;
     }
 
     getDisplayText(): string {
@@ -32,7 +34,7 @@ export class ImporterPopUpView extends ItemView
         container.createEl('h1',{text:this.title});
 
         container.createEl('label', {text:'Source:'});
-        container.createEl('input');
+        this.fileNameInput = container.createEl('input');
         let askOpenFileButton = container.createEl('button',{text:'...'});
         askOpenFileButton.addEventListener('click',()=>this.askOpenFileDialog('application/pdf'));
         container.createEl('label', {text:'Label:'});
@@ -49,7 +51,8 @@ export class ImporterPopUpView extends ItemView
         input.onchange = () => {
             if (input.files && input.files.length > 0)
             {
-                this.sourcePath = input.files.item(0)?.name!;
+                this.file = input.files.item(0)!;
+                this.fileNameInput.value = this.file.name!;
             }
             input.remove();
         };

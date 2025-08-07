@@ -1,4 +1,4 @@
-import { IMPORTER_POPUP_VIEW, ImporterPopUpView } from 'files/import/importer';
+import { VIEW_IMPORTER, ImporterPopUpView } from 'files/import/importer';
 import { VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
 import { MetaHandler } from 'files/metaHandler';
 import UnivresityPlugin from 'main';
@@ -156,6 +156,7 @@ export class UniversityView extends ItemView
                     {
                         const opened = await this._plugin.noteFileCreator.openFileInEditor(path)
                     }
+                    this.onOpen();
                 });
                 break;
             case DocumentSection.Lectures:
@@ -203,11 +204,14 @@ export class UniversityView extends ItemView
             });
 
             button.addEventListener('mouseup',async (event)=>{
-                var opened = await fileCreator.openFileInEditor(value.path, false);
-                if (!opened)
+                if (event.button === 1)
                 {
-                    console.error(`File ${value.path} not found (code: 204b).`);
-                    new Notice(`File '${value.name}' not found (204b).`);
+                    var opened = await fileCreator.openFileInEditor(value.path, false);
+                    if (!opened)
+                    {
+                        console.error(`File ${value.path} not found (code: 204b).`);
+                        new Notice(`File '${value.name}' not found (204b).`);
+                    }
                 }
             });
         });
@@ -321,6 +325,7 @@ export class UniversityView extends ItemView
             await this.app.vault.createFolder(path);
         }
         this.onOpen();
+
     }
 
     _getSemesterPath() : string
