@@ -1,3 +1,5 @@
+import { IMPORTER_POPUP_VIEW, ImporterPopUpView } from 'files/import/importer';
+import { VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
 import { MetaHandler } from 'files/metaHandler';
 import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
@@ -161,6 +163,14 @@ export class UniversityView extends ItemView
                 this._plugin.lectureFileCreator.setPath(sectionPath);
                 await this.generateFileSection(container, this._plugin.lectureFileCreator, async ()=>{
                     // const path = await this._plugin.lectureFileCreator.importFile()
+
+                    const leaf = this.app.workspace.getLeaf(true);
+                    await leaf.setViewState({
+                        type: VIEW_LECUTRE_IMPORTER,
+                        active: true
+                    });
+                    this._plugin.importerPopUpView.setTitle('Import lecture');
+                    this.app.workspace.revealLeaf(leaf);
                 });
                 break;
             case DocumentSection.Readings:
@@ -233,6 +243,7 @@ export class UniversityView extends ItemView
 
     _onNavbarClick(documentSection: DocumentSection)
     {
+        this._currentDocumentSection = documentSection;
         this.onOpen();
     }
 
