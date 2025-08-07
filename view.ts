@@ -3,6 +3,7 @@ import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
 const NOTES = 'notes';
+const LECTURES = 'lectures';
 export const VIEW_UNIVERSITY = 'University';
 
 interface INavbarData 
@@ -140,10 +141,11 @@ export class UniversityView extends ItemView
         await this.generateNavBar(container);
 
         console.log("Doc: " + this._currentDocumentSection);
+        let sectionPath;
         switch (this._currentDocumentSection)
         {
             case DocumentSection.Notes:
-                const sectionPath = await this.createSubFolderIfNotExists(NOTES);
+                sectionPath = await this.createSubFolderIfNotExists(NOTES);
                 this._plugin.noteFileCreator.setPath(sectionPath);
                 await this.generateFileSection(container,this._plugin.noteFileCreator,async ()=>{
                     const path = await this._plugin.noteFileCreator.createFileAsync();
@@ -155,10 +157,14 @@ export class UniversityView extends ItemView
                 });
                 break;
             case DocumentSection.Lectures:
-                await this.generateLecturesSection(container);
+                sectionPath = await this.createSubFolderIfNotExists(LECTURES);
+                this._plugin.lectureFileCreator.setPath(sectionPath);
+                await this.generateFileSection(container, this._plugin.lectureFileCreator, async ()=>{
+                    // const path = await this._plugin.lectureFileCreator.importFile()
+                });
                 break;
             case DocumentSection.Readings:
-                await this.generateReadingsSection(container);
+                // await this.generateReadingsSection(container);
                 break;
         }
 
@@ -201,63 +207,6 @@ export class UniversityView extends ItemView
         button.addEventListener('click',fileCreateMethod);
     }
 
-    async generateNotesSection(container: Element)
-    {
-        const notesPath = await this.createSubFolderIfNotExists(NOTES);
-        const files = await this._plugin.noteFileCreator.getFilesAsync();
-
-        let div = container.createDiv();
-        div.addClass('university-notes-div');
-
-        files.forEach((value)=>{
-            let button = div.createEl('button',{text:value.label});
-            button.addEventListener('click',(event)=>{
-                this._plugin.noteFileCreator.openFileInEditor(value.path);
-            });
-            button.addEventListener('mouseup',(event)=>{
-                if (event.button === 1)
-                {
-                    event.preventDefault();
-                    this._plugin.noteFileCreator.openFileInEditor(value.path,false);
-                }
-            });
-        });
-
-
-        let button = container.createEl('button',{text:'Create'});
-        button.addClass("university-notes-create-button");
-        button.addEventListener('click',(event)=>{
-            this.createNote();
-        });
-    }
-
-    async generateLecturesSection(container: Element)
-    {
-        
-    }
-
-    async generateReadingsSection(container: Element)
-    {
-        
-    }
-
-    async createNote()
-    {
-        const path = await this._plugin.noteFileCreator.createFileAsync();
-        if (path)
-        {
-            if (!this._plugin.noteFileCreator.openFileInEditor(path))
-            {
-                new Notice(`File "${path}" not found. (201b)`);
-            }
-            await this.onOpen();
-            return;
-        }
-        console.log("paht: " , path);
-
-        new Notice('Error - 201');
-    }
-
     async generateNavBar(container: Element)
     {
         let navbar = container.createEl('ul');
@@ -284,26 +233,7 @@ export class UniversityView extends ItemView
 
     _onNavbarClick(documentSection: DocumentSection)
     {
-        // new Notice(`${id} selected`);
-        // let navbarItem = this._getNavbarItem(id);
-        // if (navbarItem != null)
-        // {
-        //     this._navbarData.forEach((value, index)=>{
-        //         if (value.element != null)
-        //         {
-        //             value.element.className = value.id == id ? 'university-navbar-child-active' : 'university-navbar-child';
-        //         }
-        //         if (value.id == id)
-        //         {
-                    this._currentDocumentSection = documentSection;
-            //         console.log("1");
-            //     }
-            // });
-            // console.log("2");
-            // if (click)
-                this.onOpen();
-        // }
-
+        this.onOpen();
     }
 
     _getNavbarItem(id: string):INavbarData | null
@@ -379,6 +309,7 @@ export class UniversityView extends ItemView
         {
             await this.app.vault.createFolder(path);
         }
+        this.onOpen();
     }
 
     _getSemesterPath() : string

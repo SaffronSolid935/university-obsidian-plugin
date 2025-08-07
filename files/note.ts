@@ -10,14 +10,7 @@ export class NoteFileCreator extends MetaHandler
     metaData: MetaFile;
     constructor(app: App, plugin: UnivresityPlugin)
     {
-        super(app, plugin, false);
-
-        this.setDefaultMeta();
-    }
-
-    setDefaultMeta(): void {
-        this.metaData = new MetaFile();
-        console.log("Hi + ", this.metaData);
+        super(app, plugin);
     }
 
     async createFileAsync(): Promise<string|null> 
@@ -64,7 +57,7 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
 
     async getFilesAsync(): Promise<Array<TAdvancedFile>>
     {
-        await this.readMetaAsync(MetaFile.fromObject, this.setDefaultMeta);
+        await this.readMetaAsync();
         console.log(this.setDefaultMeta);
         console.log("Meta: ", this.metaData);
         console.log("Meta2: ", typeof(this.metaData));

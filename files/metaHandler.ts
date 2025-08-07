@@ -1,5 +1,7 @@
+import { copyFile } from "fs/promises";
 import UnivresityPlugin from "main";
-import { App, PaneType, TFile, Vault, WorkspaceLeaf } from "obsidian";
+import { App, FileSystemAdapter, PaneType, TFile, Vault, WorkspaceLeaf } from "obsidian";
+import * as path from "path";
 import { stringify } from "querystring";
 
 const METADATA_FILE = 'meta.json';
@@ -115,19 +117,17 @@ export class MetaHandler
     plugin: UnivresityPlugin;
     app: App;
     path: string
-    constructor(app: App,plugin: UnivresityPlugin, init: boolean = true)
+    constructor(app: App,plugin: UnivresityPlugin)
     {
         this.app = app;
         this.plugin = plugin;
-        if (init)
-        {
-            // this.setDefaultMeta();
-        }
+        this.setDefaultMeta();
     }
 
-    setPath(path: string)
+    async setPath(path: string)
     {
         this.path = path;
+        await this.readMetaAsync();
     }
 
     async createFileAsync() : Promise<string|null>
@@ -160,24 +160,24 @@ export class MetaHandler
 
     }
 
-    async readMetaAsync(setMetaFromObject: (data: object) => any, setDefault: () => any = () => {})
+    async readMetaAsync()
     {
         const path = this._getMetaPath();
 
-        const file = this.app.vault.getFileByPath(path);
-
-        if (file && file instanceof TFile)
+        if (await this.app.vault.adapter.exists(path))
         {
-            if (await this.app.vault.adapter.exists(path))
+            const file = this.app.vault.getFileByPath(path);
+            console.log(`file: ${file}`);
+            if (file && file instanceof TFile)
             {
                 const raw = await this.app.vault.read(file);
 
-                this.metaData = setMetaFromObject(JSON.parse(raw));
+                this.metaData = MetaFile.fromObject(JSON.parse(raw));
             }
-            else
-            {
-                setDefault();
-            }
+        }
+        else
+        {
+            this.setDefaultMeta();
         }
     }
 
@@ -222,5 +222,46 @@ export class MetaHandler
         leaf.openFile(file);
 
         return true;
+    }
+
+    async importFile(source: string, label: string) : Promise<string|null>
+    {
+        let targetFolder: string | null = this._getAbsoluteFolderPath();
+        if (targetFolder)
+        {
+            await copyFile(source,targetFolder);
+
+            let file = this.app.vault.getFileByPath(`${targetFolder}/${path.basename(source)}`)
+            if (file)
+            {
+                console.log(file.path);
+                
+                let metaDataFile = new TAdvancedFile(file);
+                metaDataFile.label = label;
+                metaDataFile.setIndexByPreIndex(this.metaData.getHighestIndex());
+                metaDataFile.date = new Date();
+                this.metaData.files.push(metaDataFile);
+                return file.path;
+            }
+        }
+        return null;
+    }
+
+    _getAbsoluteFolderPath(): string | null
+    {
+        let basePath: string;
+        let adapter = this.app.vault.adapter;
+        if (adapter instanceof FileSystemAdapter)
+        {
+            basePath = adapter.getBasePath();
+            return path.join(basePath, this.path);
+        }
+        return null;
+    }
+
+
+    setDefaultMeta(): void {
+        this.metaData = new MetaFile();
+        console.log("Hi + ", this.metaData);
     }
 }
