@@ -3,7 +3,80 @@ import { App, PaneType, TFile, Vault, WorkspaceLeaf } from "obsidian";
 import { stringify } from "querystring";
 
 const METADATA_FILE = 'meta.json';
+export interface IMetaFile
+{
 
+    files: Array<TAdvancedFile>;
+}
+export class MetaFile implements IMetaFile
+{
+    files: TAdvancedFile[];
+    constructor()
+    {
+        this.files = [];
+    }
+
+    static fromObject(data: IMetaFile)
+    {
+        let metaData = new MetaFile();
+        metaData.files = data.files;
+        console.log(metaData);
+        for (let i = 0; i < metaData.files.length; i++)
+        {
+            metaData.files[i].date = new Date(metaData.files[i].date);
+        }
+        console.log(metaData);
+        return metaData;
+    }
+
+    getHighestIndex() : number
+    {
+        let highest = -1;
+        for (var i = 0; i < this.files.length; i++)
+        {
+            if (this.files[i].index > highest)
+            {
+                highest = this.files[i].index;
+            }
+        }
+        return highest;
+    }
+
+    sortByIndex(desc: boolean)
+    {
+        this.files.sort((a,b)=>{
+            let returnValue = 0;
+            if (a && b)
+            {
+                returnValue = a.index - b.index
+            }
+            else if (a)
+            {
+                returnValue = -1;
+            }
+            else if (b)
+            {
+                returnValue = 1;
+            }
+            
+            return returnValue * (desc ? -1 : 1);
+        });
+    }
+
+    sortByDate()
+    {
+        this.files.sort((a,b)=>{
+            const dateA = a.date;
+            const dateB = b.date;
+
+            if (dateA && dateB)
+            {
+                return dateB.getDate() - dateA.getDate();
+            }
+            return 0;
+        });
+    }
+}
 export class TAdvancedFile
 {
     basename: string;
@@ -38,7 +111,7 @@ export interface IMetaHandler
 
 export class MetaHandler
 {
-    metaData:object;
+    metaData:MetaFile;
     plugin: UnivresityPlugin;
     app: App;
     path: string
