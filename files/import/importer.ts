@@ -54,6 +54,7 @@ export class ImporterPopUpView extends ItemView
 
         const importButton = container.createEl('button',{text:'Import'});
         importButton.addClass('university-importer-item');
+        importButton.addEventListener('click',()=>this.import());
     }
 
     private async askOpenFileDialog(types: string)
@@ -74,6 +75,11 @@ export class ImporterPopUpView extends ItemView
 
         document.body.appendChild(input);
         input.click();
+    }
+
+    private async import()
+    {
+        
     }
 
     async onClose(): Promise<void> {
