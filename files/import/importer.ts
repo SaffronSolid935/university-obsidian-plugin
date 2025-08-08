@@ -5,8 +5,8 @@ export const VIEW_IMPORTER = "file-importer";
 export class ImporterPopUpView extends ItemView
 {
     protected title: string;
-    protected fileNameInput: HTMLInputElement;
     protected file: File;
+    askOpenFileButton: HTMLButtonElement;
 
     constructor(leaf: WorkspaceLeaf)
     {
@@ -33,12 +33,27 @@ export class ImporterPopUpView extends ItemView
         container.empty();
         container.createEl('h1',{text:this.title});
 
-        container.createEl('label', {text:'Source:'});
-        this.fileNameInput = container.createEl('input');
-        let askOpenFileButton = container.createEl('button',{text:'...'});
-        askOpenFileButton.addEventListener('click',()=>this.askOpenFileDialog('application/pdf'));
-        container.createEl('label', {text:'Label:'});
-        container.createEl('input');
+        const line1 = container.createDiv();
+        line1.addClass('university-importer-item');
+
+        const fileLabel = line1.createEl('label', {text:'File:'});
+        fileLabel.addClasses(['university-importer-subitem','university-importer-label']);
+        if (this.askOpenFileButton == undefined || this.askOpenFileButton == null)
+        {
+            this.askOpenFileButton = line1.createEl('button',{text:'Select file'});
+            this.askOpenFileButton.addEventListener('click',()=>this.askOpenFileDialog('application/pdf'));
+            this.askOpenFileButton.addClasses(['university-importer-subitem','university-importer-nonlabel']);
+        }
+        const line2 = container.createDiv();
+        line2.addClass('university-importer-item');
+
+        const labelLabel = line2.createEl('label', {text:'Label:'});
+        labelLabel.addClasses(['university-importer-subitem','university-importer-label']);
+        const labelInput = line2.createEl('input');
+        labelInput.addClasses(['university-importer-subitem','university-importer-nonlabel']);
+
+        const importButton = container.createEl('button',{text:'Import'});
+        importButton.addClass('university-importer-item');
     }
 
     private async askOpenFileDialog(types: string)
@@ -52,7 +67,7 @@ export class ImporterPopUpView extends ItemView
             if (input.files && input.files.length > 0)
             {
                 this.file = input.files.item(0)!;
-                this.fileNameInput.value = this.file.name!;
+                this.askOpenFileButton.innerText = this.file.name!;
             }
             input.remove();
         };

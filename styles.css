@@ -1,4 +1,32 @@
 
+.university-importer-item
+{
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.university-importer-subitem
+{
+    display: inline-block;
+}
+
+.university-importer-label
+{
+    --width: 30%;
+    width: var(--width);
+    min-width: var(--width);
+    max-width: var(--width);
+}
+
+.university-importer-nonlabel
+{
+    --width: 70%;
+    width: var(--width);
+    min-width: var(--width);
+    max-width: var(--width);
+}
+
 .university-view-container
 {
     --university-view-padding: 1em;
@@ -20,6 +48,7 @@
     width: 100%;
     height: calc(100% - var(--university-view-padding) * 2 - 2em * 4); /*just an estimate*/
     scroll-behavior: auto;
+    overflow: auto;
     /* background-color: red; */
 }
 

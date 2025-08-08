@@ -3,7 +3,7 @@ import { UniversityView, VIEW_UNIVERSITY } from 'view';
 import { DEFAULT_SETTINGS, UniversityPluginSettings, UniversitySettingsTab } from 'settings';
 import { NoteFileCreator } from 'files/note';
 import { LecutreFileCreator } from 'files/lecture';
-import { ImporterPopUpView, IMPORTER_POPUP_VIEW } from 'files/import/importer';
+import { ImporterPopUpView } from 'files/import/importer';
 import { LectureImporterView, VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
 // import navbarCSS from "./styles/navbar.css";
 
@@ -17,7 +17,6 @@ export default class UnivresityPlugin extends Plugin
     noteFileCreator: NoteFileCreator;
     lectureFileCreator: LecutreFileCreator;
 
-    importerPopUpView: ImporterPopUpView;
 
     constructor(app: App, manifest: PluginManifest)
     {
@@ -36,12 +35,7 @@ export default class UnivresityPlugin extends Plugin
         );
         this.registerView(
             VIEW_LECUTRE_IMPORTER,
-            (leaf) => 
-                {
-                    const view = new LectureImporterView(leaf)
-                    this.importerPopUpView = view;
-                    return view;
-                }
+            (leaf) => new LectureImporterView(leaf)
         );
         this.addRibbonIcon('graduation-cap','University',(evt) => this._openSidebar());
         // ribbonIcon.addClass('my-plugin-ribbon-class');

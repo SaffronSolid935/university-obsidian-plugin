@@ -149,7 +149,7 @@ export class UniversityView extends ItemView
             case DocumentSection.Notes:
                 sectionPath = await this.createSubFolderIfNotExists(NOTES);
                 this._plugin.noteFileCreator.setPath(sectionPath);
-                await this.generateFileSection(container,this._plugin.noteFileCreator,async ()=>{
+                await this.generateFileSection(container,this._plugin.noteFileCreator, 'Create note',async ()=>{
                     const path = await this._plugin.noteFileCreator.createFileAsync();
 
                     if (path)
@@ -162,16 +162,28 @@ export class UniversityView extends ItemView
             case DocumentSection.Lectures:
                 sectionPath = await this.createSubFolderIfNotExists(LECTURES);
                 this._plugin.lectureFileCreator.setPath(sectionPath);
-                await this.generateFileSection(container, this._plugin.lectureFileCreator, async ()=>{
+                await this.generateFileSection(container, this._plugin.lectureFileCreator, 'Import lecture', async ()=>{
                     // const path = await this._plugin.lectureFileCreator.importFile()
 
-                    const leaf = this.app.workspace.getLeaf(true);
-                    await leaf.setViewState({
-                        type: VIEW_LECUTRE_IMPORTER,
-                        active: true
-                    });
-                    this._plugin.importerPopUpView.setTitle('Import lecture');
-                    this.app.workspace.revealLeaf(leaf);
+                    // new UniversityView();
+                    const { workspace } = this.app;
+
+                    let leaf: WorkspaceLeaf | null = null;
+                    const leaves = workspace.getLeavesOfType(VIEW_LECUTRE_IMPORTER);
+
+                    if (leaves.length > 0)
+                    {
+                        leaf = leaves[0];
+                    } else 
+                    {
+                        leaf = workspace.getRightLeaf(false);
+                        await leaf?.setViewState({ type: VIEW_LECUTRE_IMPORTER, active: true});
+                    }
+
+                    if (leaf != null)
+                        workspace.revealLeaf(leaf);
+                    else
+                        new Notice('Error');
                 });
                 break;
             case DocumentSection.Readings:
@@ -184,7 +196,7 @@ export class UniversityView extends ItemView
         // var button = container.createEl('button',{text:'hello world'});
         // button.addEventListener("click", () => this.click());
     }
-    async generateFileSection(container: Element, fileCreator: MetaHandler, fileCreateMethod: (event: MouseEvent)=>any)
+    async generateFileSection(container: Element, fileCreator: MetaHandler, fileCreateText: string, fileCreateMethod: (event: MouseEvent)=>any)
     {
 
         const files = await fileCreator.getFilesAsync();
@@ -216,7 +228,7 @@ export class UniversityView extends ItemView
             });
         });
 
-        const button = container.createEl('button',{text:'Create new note'});
+        const button = container.createEl('button',{text:fileCreateText});
         button.addClass('university-notes-create-button');
         button.addEventListener('click',fileCreateMethod);
     }
