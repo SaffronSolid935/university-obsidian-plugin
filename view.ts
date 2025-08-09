@@ -1,11 +1,13 @@
 import { VIEW_IMPORTER, ImporterPopUpView } from 'files/import/importer';
 import { VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
+import { VIEW_READING_IMPORTER } from 'files/import/readingImporter';
 import { MetaHandler } from 'files/metaHandler';
 import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
 export const NOTES = 'notes';
 export const LECTURES = 'lectures';
+export const READINGS = 'readings';
 export const VIEW_UNIVERSITY = 'University';
 
 interface INavbarData 
@@ -63,6 +65,8 @@ export class UniversityView extends ItemView
 
     _plugin: UnivresityPlugin;
     _semesterOptions: Array<string> = [];
+
+    private subLeaf: WorkspaceLeaf;
     
     constructor (leaf: WorkspaceLeaf, plugin: UnivresityPlugin)
     {
@@ -163,6 +167,7 @@ export class UniversityView extends ItemView
                 sectionPath = await this.createSubFolderIfNotExists(LECTURES);
                 this._plugin.lectureFileCreator.setPath(sectionPath);
                 await this.generateFileSection(container, this._plugin.lectureFileCreator, 'Import lecture', async ()=>{
+                    this._plugin.lectureFileCreator.setOnImport(this.onOpen);
                     // const path = await this._plugin.lectureFileCreator.importFile()
 
                     // new UniversityView();
@@ -181,13 +186,42 @@ export class UniversityView extends ItemView
                     }
 
                     if (leaf != null)
+                    {
+                        this.subLeaf = leaf;
                         workspace.revealLeaf(leaf);
+                    }
                     else
                         new Notice('Error');
                 });
                 break;
             case DocumentSection.Readings:
                 // await this.generateReadingsSection(container);
+                sectionPath = await this.createSubFolderIfNotExists(READINGS);
+                this._plugin.readingFileCreator.setPath(sectionPath);
+                await this.generateFileSection(container,this._plugin.readingFileCreator,'Import reading',async ()=>{
+                    this._plugin.readingFileCreator.setOnImport(this.onOpen);
+                    const { workspace } = this.app;
+
+                    let leaf: WorkspaceLeaf | null = null;
+                    const leaves = workspace.getLeavesOfType(VIEW_READING_IMPORTER);
+
+                    if (leaves.length > 0)
+                    {
+                        leaf = leaves[0];
+                    } else 
+                    {
+                        leaf = workspace.getRightLeaf(false);
+                        await leaf?.setViewState({ type: VIEW_READING_IMPORTER, active: true});
+                    }
+
+                    if (leaf != null)
+                    {
+                        this.subLeaf = leaf;
+                        workspace.revealLeaf(leaf);
+                    }
+                    else
+                        new Notice('Error');
+                });
                 break;
         }
 
@@ -341,6 +375,6 @@ export class UniversityView extends ItemView
     }
 
     async onClose() {
-        
+        this.subLeaf.detach();
     }
 }

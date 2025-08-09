@@ -12,5 +12,10 @@ export class LectureImporterView extends ImporterPopUpView
         super(leaf,plugin);
         this.title = 'Import Lecture'
         this.sub = LECTURES;
+        this.setFileHandler(plugin.lectureFileCreator);
+    }
+
+    getViewType(): string {
+        return VIEW_LECUTRE_IMPORTER;
     }
 }

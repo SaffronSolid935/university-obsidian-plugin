@@ -1,3 +1,4 @@
+import { MetaHandler } from "files/metaHandler";
 import { writeFile } from "fs/promises";
 import UnivresityPlugin from "main";
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
@@ -9,9 +10,16 @@ export class ImporterPopUpView extends ItemView
     protected sub: string;
     protected title: string;
     protected file: File;
-    askOpenFileButton: HTMLButtonElement;
+    private askOpenFileButton: HTMLButtonElement;
+    private labelInput: HTMLInputElement;
 
     private plugin: UnivresityPlugin;
+    private fileHandler: MetaHandler;
+
+    protected setFileHandler(fileHandler: MetaHandler)
+    {
+        this.fileHandler = fileHandler;
+    }
 
 
     constructor(leaf: WorkspaceLeaf, plugin: UnivresityPlugin)
@@ -57,8 +65,12 @@ export class ImporterPopUpView extends ItemView
 
         const labelLabel = line2.createEl('label', {text:'Label:'});
         labelLabel.addClasses(['university-importer-subitem','university-importer-label']);
-        const labelInput = line2.createEl('input');
-        labelInput.addClasses(['university-importer-subitem','university-importer-nonlabel']);
+        if (this.labelInput == undefined || this.labelInput == null)
+        {
+            const labelInput = line2.createEl('input');
+            labelInput.addClasses(['university-importer-subitem','university-importer-nonlabel']);
+            this.labelInput = labelInput;
+        }
 
         const importButton = container.createEl('button',{text:'Import'});
         importButton.addClass('university-importer-item');
@@ -96,6 +108,9 @@ export class ImporterPopUpView extends ItemView
         const vault = this.app.vault;
 
         await vault.createBinary(targetFilePath,buffer);
+
+        await this.fileHandler.importFile(targetFilePath,this.labelInput.value);
+        await this.fileHandler.openFileInEditor(targetFilePath,true);
 
     }
 

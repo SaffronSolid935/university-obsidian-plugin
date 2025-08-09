@@ -117,6 +117,12 @@ export class MetaHandler
     plugin: UnivresityPlugin;
     app: App;
     path: string
+
+    private onImport: () => any;
+    public setOnImport(onImport: () => any)
+    {
+        this.onImport = onImport;
+    }
     constructor(app: App,plugin: UnivresityPlugin)
     {
         this.app = app;
@@ -221,28 +227,29 @@ export class MetaHandler
 
         leaf.openFile(file);
 
+        this.onImport();
+
         return true;
     }
 
-    async importFile(source: string, label: string) : Promise<string|null>
+    async importFile(path: string, label: string) : Promise<string|null>
     {
-        let targetFolder: string | null = this._getAbsoluteFolderPath();
-        if (targetFolder)
+        let file = this.app.vault.getFileByPath(path)
+        if (file)
         {
-            await copyFile(source,targetFolder);
-
-            let file = this.app.vault.getFileByPath(`${targetFolder}/${path.basename(source)}`)
-            if (file)
-            {
-                console.log(file.path);
-                
-                let metaDataFile = new TAdvancedFile(file);
-                metaDataFile.label = label;
-                metaDataFile.setIndexByPreIndex(this.metaData.getHighestIndex());
-                metaDataFile.date = new Date();
-                this.metaData.files.push(metaDataFile);
-                return file.path;
-            }
+            await this.readMetaAsync();
+            console.log(file.path);
+            
+            let metaDataFile = new TAdvancedFile(file);
+            metaDataFile.label = label;
+            metaDataFile.setIndexByPreIndex(this.metaData.getHighestIndex());
+            metaDataFile.date = new Date();
+            this.metaData.files.push(metaDataFile);
+            await this.saveMetaAsync();
+            console.log('onImport: ', this.onImport);
+            if (this.onImport && false)
+                this.onImport();
+            return file.path;
         }
         return null;
     }
