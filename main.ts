@@ -20,6 +20,18 @@ export default class UnivresityPlugin extends Plugin
     lectureFileCreator: LecutreFileCreator;
     readingFileCreator: ReadingFileCreator;
 
+    private uView: UniversityView;
+
+    public setUniversityView(view: UniversityView)
+    {
+        this.uView = view;
+    }
+
+    public async updateUniversityView()
+    {
+        await this.uView.onOpen();
+    }
+
 
     constructor(app: App, manifest: PluginManifest)
     {

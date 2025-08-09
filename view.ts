@@ -72,6 +72,7 @@ export class UniversityView extends ItemView
     {
         super(leaf);
         this._plugin = plugin;
+        plugin.setUniversityView(this);
     }
 
     getViewType()
@@ -167,7 +168,6 @@ export class UniversityView extends ItemView
                 sectionPath = await this.createSubFolderIfNotExists(LECTURES);
                 this._plugin.lectureFileCreator.setPath(sectionPath);
                 await this.generateFileSection(container, this._plugin.lectureFileCreator, 'Import lecture', async ()=>{
-                    this._plugin.lectureFileCreator.setOnImport(this.onOpen);
                     // const path = await this._plugin.lectureFileCreator.importFile()
 
                     // new UniversityView();
@@ -199,7 +199,6 @@ export class UniversityView extends ItemView
                 sectionPath = await this.createSubFolderIfNotExists(READINGS);
                 this._plugin.readingFileCreator.setPath(sectionPath);
                 await this.generateFileSection(container,this._plugin.readingFileCreator,'Import reading',async ()=>{
-                    this._plugin.readingFileCreator.setOnImport(this.onOpen);
                     const { workspace } = this.app;
 
                     let leaf: WorkspaceLeaf | null = null;

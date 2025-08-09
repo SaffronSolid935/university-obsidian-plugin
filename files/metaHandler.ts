@@ -116,13 +116,7 @@ export class MetaHandler
     metaData:MetaFile;
     plugin: UnivresityPlugin;
     app: App;
-    path: string
-
-    private onImport: () => any;
-    public setOnImport(onImport: () => any)
-    {
-        this.onImport = onImport;
-    }
+    path: string;
     constructor(app: App,plugin: UnivresityPlugin)
     {
         this.app = app;
@@ -227,8 +221,6 @@ export class MetaHandler
 
         leaf.openFile(file);
 
-        this.onImport();
-
         return true;
     }
 
@@ -246,9 +238,8 @@ export class MetaHandler
             metaDataFile.date = new Date();
             this.metaData.files.push(metaDataFile);
             await this.saveMetaAsync();
-            console.log('onImport: ', this.onImport);
-            if (this.onImport && false)
-                this.onImport();
+
+            this.plugin.updateUniversityView();
             return file.path;
         }
         return null;
