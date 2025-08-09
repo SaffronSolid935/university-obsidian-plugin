@@ -4,8 +4,8 @@ import { MetaHandler } from 'files/metaHandler';
 import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
-const NOTES = 'notes';
-const LECTURES = 'lectures';
+export const NOTES = 'notes';
+export const LECTURES = 'lectures';
 export const VIEW_UNIVERSITY = 'University';
 
 interface INavbarData 
@@ -93,7 +93,7 @@ export class UniversityView extends ItemView
 
     async createSubFolderIfNotExists(sub: string) : Promise<string>
     {
-        const path = this._getSubModulePath(sub);
+        const path = this._plugin.getSubModulePath(sub);
         const adapter = this.app.vault.adapter;
         if (!(await adapter.exists(path)))
         {
@@ -298,7 +298,7 @@ export class UniversityView extends ItemView
 
     async _generateCurrentFolderIfNotExists()
     {   
-        const path = this._getModulePath();
+        const path = this._plugin.getModulePath();
         const adapter = this.app.vault.adapter;
         if (!(await adapter.exists(path)))
         {
@@ -313,7 +313,7 @@ export class UniversityView extends ItemView
         this._plugin.saveSettings();
         new Notice(`Semester ${index + 1} selected`);
 
-        const path = this._getSemesterPath();
+        const path = this._plugin.getSemesterPath();
 
         const adapter = this.app.vault.adapter;
 
@@ -328,7 +328,7 @@ export class UniversityView extends ItemView
         this._plugin.settings.lastSelectedModuleIndex = index;
         this._plugin.saveSettings();
 
-        const path = this._getModulePath();
+        const path = this._plugin.getModulePath();;
 
         const adapter = this.app.vault.adapter;
 
@@ -338,21 +338,6 @@ export class UniversityView extends ItemView
         }
         this.onOpen();
 
-    }
-
-    _getSemesterPath() : string
-    {
-        return `Semester ${this._plugin.settings.currentSemester + 1}`;
-    }
-
-    _getModulePath(): string
-    {
-        return `${this._getSemesterPath()}/${this._plugin.settings.modules[this._plugin.settings.currentSemester][this._plugin.settings.lastSelectedModuleIndex]}`;
-    }
-
-    _getSubModulePath(sub: string)
-    {
-        return `${this._getModulePath()}/${sub}`;
     }
 
     async onClose() {

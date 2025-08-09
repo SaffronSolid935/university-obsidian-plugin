@@ -1,17 +1,25 @@
+import { writeFile } from "fs/promises";
+import UnivresityPlugin from "main";
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
 
 export const VIEW_IMPORTER = "file-importer";
 
 export class ImporterPopUpView extends ItemView
 {
+    protected sub: string;
     protected title: string;
     protected file: File;
     askOpenFileButton: HTMLButtonElement;
 
-    constructor(leaf: WorkspaceLeaf)
+    private plugin: UnivresityPlugin;
+
+
+    constructor(leaf: WorkspaceLeaf, plugin: UnivresityPlugin)
     {
         super(leaf);
+        this.plugin = plugin;
         this.title = 'Importer'
+        this.sub = 'dummy';
     }
 
     getViewType(): string {
@@ -79,7 +87,16 @@ export class ImporterPopUpView extends ItemView
 
     private async import()
     {
+        const targetPath = this.plugin.getSubModulePath(this.sub);
+        const targetFilePath = `${targetPath}/${this.file.name}`;
+        const arrayBuffer = await this.file.arrayBuffer();
+
+        const buffer = Buffer.from(arrayBuffer);
         
+        const vault = this.app.vault;
+
+        await vault.createBinary(targetFilePath,buffer);
+
     }
 
     async onClose(): Promise<void> {

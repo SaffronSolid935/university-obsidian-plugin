@@ -35,7 +35,7 @@ export default class UnivresityPlugin extends Plugin
         );
         this.registerView(
             VIEW_LECUTRE_IMPORTER,
-            (leaf) => new LectureImporterView(leaf)
+            (leaf) => new LectureImporterView(leaf,this)
         );
         this.addRibbonIcon('graduation-cap','University',(evt) => this._openSidebar());
         // ribbonIcon.addClass('my-plugin-ribbon-class');
@@ -85,5 +85,20 @@ export default class UnivresityPlugin extends Plugin
     async saveSettings()
     {
         await this.saveData(this.settings);
+    }
+
+    public getSemesterPath() : string
+    {
+        return `Semester ${this.settings.currentSemester + 1}`;
+    }
+
+    public getModulePath()
+    {
+        return `${this.getSemesterPath()}/${this.settings.modules[this.settings.currentSemester][this.settings.lastSelectedModuleIndex]}`;
+    }
+
+    public getSubModulePath(sub: string): string
+    {
+        return `${this.getModulePath()}/${sub}`;
     }
 }
