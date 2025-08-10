@@ -1,6 +1,6 @@
 {
 	"id": "saffron-university",
-	"name": "Saffron's University Package",
+	"name": "Saffron's University plugin",
 	"version": "1.0.0",
 	"minAppVersion": "1.8.10",
 	"description": "This plugin allows the user, to create faster notes for university with a specific schema.",

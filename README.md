@@ -6,7 +6,10 @@
 
 > Automatic updates are not guaranteed, but updating is easy.
 
-*`not set yet`*
+1. Open the obsidian vault, where you want to install the plugin.
+2. Go to `Settings>Community plugins`
+3. Activate the community plugins if not done yet.
+4. Search for `Saffron'S University Plugin` and install it.
 
 ### Manual (no auto update)
 
@@ -23,7 +26,7 @@
     - `main.js`
     - `style.js`
     - `manifest.json`
-7. Open Obsidian, go to `Settings>Community plugins`, activate community plugins if not done yet, and activate `Saffron's University Package`.
+7. Open Obsidian, go to `Settings>Community plugins`, activate community plugins if not done yet, and activate `Saffron's University plugin`.
 
 ### Development
 
@@ -35,9 +38,10 @@
 
 > See also the [official documentation](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin)
 
-## Usage
+## Links
 
-*`not set yet`*
+- [Usage](./USAGE.md)
+- [Error codes](./errorcodes.md)
 
 ## License
 
