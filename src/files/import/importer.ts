@@ -3,25 +3,54 @@ import { writeFile } from "fs/promises";
 import UnivresityPlugin from "main";
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
 
+/**
+ * Default file importert view id.
+ */
 export const VIEW_IMPORTER = "file-importer";
 
+/**
+ * Allows to import a file wich source is outside of the vault.
+ */
 export class ImporterPopUpView extends ItemView
 {
+    //#region properties
+    /**
+     * The sub folder of the modules path.
+     */
     protected sub: string;
+    /**
+     * The title of the view; 
+     */
     protected title: string;
+    /**
+     * The file data, which should be imported.
+     */
     protected file: File;
+    /**
+     * The HTML open file button. This is used, to update the button text to the file name.
+     */
     private askOpenFileButton: HTMLButtonElement;
+    /**
+     * The input which should not be changed, when updating the view.
+     */
     private labelInput: HTMLInputElement;
 
+    /**
+     * This is the University Plugin. It is used to get some settings.
+     */
     private plugin: UnivresityPlugin;
+    /**
+     * The filehandler is needed to update the metafiles (on file import) and opening the file.
+     */
     private fileHandler: MetaHandler;
 
-    protected setFileHandler(fileHandler: MetaHandler)
-    {
-        this.fileHandler = fileHandler;
-    }
+    //#endregion
 
-
+    /**
+     * This will be instantiated by the University view.
+     * @param leaf 
+     * @param plugin The university plugin.
+     */
     constructor(leaf: WorkspaceLeaf, plugin: UnivresityPlugin)
     {
         super(leaf);
@@ -30,17 +59,13 @@ export class ImporterPopUpView extends ItemView
         this.sub = 'dummy';
     }
 
+    //#region Lifecycle
     getViewType(): string {
         return VIEW_IMPORTER;
     }
 
     getDisplayText(): string {
         return 'File importer';
-    }
-
-    public setTitle(title: string)
-    {
-        this.title = title;
     }
 
     async onOpen(): Promise<void> {
@@ -76,7 +101,30 @@ export class ImporterPopUpView extends ItemView
         importButton.addClass('university-importer-item');
         importButton.addEventListener('click',()=>this.import());
     }
+    //#endregion
+    
+    /**
+     * Sets the filehandler;
+     * @param fileHandler 
+     */
+    protected setFileHandler(fileHandler: MetaHandler)
+    {
+        this.fileHandler = fileHandler;
+    }
+    
+    /**
+     * Sets the title of the importer view
+     * @param title 
+     */
+    public setTitle(title: string)
+    {
+        this.title = title;
+    }
 
+    /**
+     * Opens the file dialog, which asks for the given filetype. 
+     * @param types The filetype, as the html input elements like.
+     */
     private async askOpenFileDialog(types: string)
     {
         const input = document.createElement('input');
@@ -97,6 +145,9 @@ export class ImporterPopUpView extends ItemView
         input.click();
     }
 
+    /**
+     * Saves the selected file inside the vault.
+     */
     private async import()
     {
         const targetPath = this.plugin.getSubModulePath(this.sub);
