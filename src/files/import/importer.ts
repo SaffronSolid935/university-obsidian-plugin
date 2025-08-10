@@ -1,4 +1,4 @@
-import { MetaHandler } from "files/metaHandler";
+import { MetaHandler } from "src/files/metaHandler";
 import { writeFile } from "fs/promises";
 import UnivresityPlugin from "main";
 import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";

@@ -1,12 +1,12 @@
 import {App, Notice, Plugin, PluginManifest, WorkspaceLeaf} from 'obsidian';
-import { UniversityView, VIEW_UNIVERSITY } from 'view';
-import { DEFAULT_SETTINGS, UniversityPluginSettings, UniversitySettingsTab } from 'settings';
-import { NoteFileCreator } from 'files/note';
-import { LecutreFileCreator } from 'files/lecture';
-import { ImporterPopUpView } from 'files/import/importer';
-import { LectureImporterView, VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
-import { ReadingFileCreator } from 'files/reading';
-import { ReadingImporterView, VIEW_READING_IMPORTER } from 'files/import/readingImporter';
+import { UniversityView, VIEW_UNIVERSITY } from 'src/view';
+import { DEFAULT_SETTINGS, UniversityPluginSettings, UniversitySettingsTab } from 'src/settings';
+import { NoteFileCreator } from 'src/files/note';
+import { LecutreFileCreator } from 'src/files/lecture';
+import { ImporterPopUpView } from 'src/files/import/importer';
+import { LectureImporterView, VIEW_LECUTRE_IMPORTER } from 'src/files/import/lectureInporter';
+import { ReadingFileCreator } from 'src/files/reading';
+import { ReadingImporterView, VIEW_READING_IMPORTER } from 'src/files/import/readingImporter';
 // import navbarCSS from "./styles/navbar.css";
 
 // const STYLESHEETS: Array<string> = [

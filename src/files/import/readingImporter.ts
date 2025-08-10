@@ -1,6 +1,6 @@
 import { WorkspaceLeaf } from "obsidian";
 import { ImporterPopUpView } from "./importer";
-import { READINGS } from "view";
+import { READINGS } from "src/view";
 import UnivresityPlugin from "main";
 
 export const VIEW_READING_IMPORTER = "view-reading-importer";

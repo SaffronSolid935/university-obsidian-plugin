@@ -1,7 +1,7 @@
-import { VIEW_IMPORTER, ImporterPopUpView } from 'files/import/importer';
-import { VIEW_LECUTRE_IMPORTER } from 'files/import/lectureInporter';
-import { VIEW_READING_IMPORTER } from 'files/import/readingImporter';
-import { MetaHandler } from 'files/metaHandler';
+import { VIEW_IMPORTER, ImporterPopUpView } from 'src/files/import/importer';
+import { VIEW_LECUTRE_IMPORTER } from 'src/files/import/lectureInporter';
+import { VIEW_READING_IMPORTER } from 'src/files/import/readingImporter';
+import { MetaHandler } from 'src/files/metaHandler';
 import UnivresityPlugin from 'main';
 import { FileManager, ItemView, Notice, Plugin, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
 
