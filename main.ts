@@ -38,7 +38,7 @@ export default class UnivresityPlugin extends Plugin
         // this.loadStyles();
         this.registerView(
             VIEW_UNIVERSITY,
-            (leaf) => new UniversityView(leaf,this)
+            (leaf) => new UniversityView(leaf,this,this.saveSettings.bind(this))
         );
         this.registerView(
             VIEW_LECUTRE_IMPORTER,
@@ -66,7 +66,7 @@ export default class UnivresityPlugin extends Plugin
 
 
     /**
-     * Saves the plugin settings. Only meant for settings, wich is why, it is private.
+     * Saves the plugin settings. Only meant for settings and the university view, wich is why, it is private.
      */
     private async saveSettings()
     {
