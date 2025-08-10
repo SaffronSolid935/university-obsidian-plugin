@@ -19,14 +19,15 @@
 1. Clone this project (`git clone https://github.com/SaffronSolid935/university-obsidian-plugin.git`) or download it as zip (`Code > Download ZIP`).
 2. If you have downloaded the zip file, extract it first.
 3. Go into the project folder.
-4. Open a terminal and run `npm run build`.
-5. Create the following path under the vault path if it does not exist:<br>
+4. Install all dependencies with `npm install`.
+5. Open a terminal and run `npm run build`.
+6. Create the following path under the vault path if it does not exist:<br>
 `<vault>/.obsidian/plugins/university-obsidian-plugin`
-6. Copy the following files from the project folder to the plugins path: 
+7. Copy the following files from the project folder to the plugins path: 
     - `main.js`
     - `style.js`
     - `manifest.json`
-7. Open Obsidian, go to `Settings>Community plugins`, activate community plugins if not done yet, and activate `Saffron's University plugin`.
+8. Open Obsidian, go to `Settings>Community plugins`, activate community plugins if not done yet, and activate `Saffron's University plugin`.
 
 ### Development
 
@@ -34,7 +35,8 @@
 2. Open the plugins folder in a terminal.
 3. Run the follwing command:<br>
 `git clone https://github.com/SaffronSolid935/university-obsidian-plugin.git && cd university-obsidian-plugin`
-4. To compile you can run `npm run dev`. This can be run in the background.
+4. Install all dependencies with `npm install`.
+5. To compile you can run `npm run dev`. This can be run in the background.
 
 > See also the [official documentation](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin)
 
