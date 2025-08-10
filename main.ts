@@ -30,7 +30,7 @@ export default class UnivresityPlugin extends Plugin
         this.readingFileCreator = new ReadingFileCreator(app,this);
     }
 
-    //#region  Plugin
+    //#region  Lifecycle
     
     async onload()
     {
