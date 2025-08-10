@@ -2,7 +2,7 @@
 	"id": "saffron-university",
 	"name": "Saffron's University Package",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
+	"minAppVersion": "1.8.10",
 	"description": "This plugin allows the user, to create faster notes for university with a specific schema.",
 	"author": "SaffronSolid935",
 	"authorUrl": "https://github.com/SaffronSolid935/",
