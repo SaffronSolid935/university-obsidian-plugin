@@ -3,120 +3,24 @@ import UnivresityPlugin from "main";
 import { App, FileSystemAdapter, PaneType, TFile, Vault, WorkspaceLeaf } from "obsidian";
 import * as path from "path";
 import { stringify } from "querystring";
+import { TAdvancedFile, MetaFile } from "./metafile";
 
+/**
+ * The meta file name.
+ */
 const METADATA_FILE = 'meta.json';
-export interface IMetaFile
-{
 
-    files: Array<TAdvancedFile>;
-}
-export class MetaFile implements IMetaFile
-{
-    files: TAdvancedFile[];
-    constructor()
-    {
-        this.files = [];
-    }
-
-    static fromObject(data: IMetaFile)
-    {
-        let metaData = new MetaFile();
-        metaData.files = data.files;
-        console.log(metaData);
-        for (let i = 0; i < metaData.files.length; i++)
-        {
-            metaData.files[i].date = new Date(metaData.files[i].date);
-        }
-        console.log(metaData);
-        return metaData;
-    }
-
-    getHighestIndex() : number
-    {
-        let highest = -1;
-        for (var i = 0; i < this.files.length; i++)
-        {
-            if (this.files[i].index > highest)
-            {
-                highest = this.files[i].index;
-            }
-        }
-        return highest;
-    }
-
-    sortByIndex(desc: boolean)
-    {
-        this.files.sort((a,b)=>{
-            let returnValue = 0;
-            if (a && b)
-            {
-                returnValue = a.index - b.index
-            }
-            else if (a)
-            {
-                returnValue = -1;
-            }
-            else if (b)
-            {
-                returnValue = 1;
-            }
-            
-            return returnValue * (desc ? -1 : 1);
-        });
-    }
-
-    sortByDate()
-    {
-        this.files.sort((a,b)=>{
-            const dateA = a.date;
-            const dateB = b.date;
-
-            if (dateA && dateB)
-            {
-                return dateB.getDate() - dateA.getDate();
-            }
-            return 0;
-        });
-    }
-}
-export class TAdvancedFile
-{
-    basename: string;
-    extension: string;
-    name: string;
-    path: string;
-    constructor(file: TFile | null)
-    {
-        if (file)
-        {
-            this.basename = file.basename;
-            this.extension = file.extension;
-            this.name = file.name;
-            this.path = file.path;
-        }
-    }
-
-    label: string;
-    index: number;
-    date: Date;
-
-    setIndexByPreIndex(preIndex: number)
-    {
-        this.index = preIndex + 1;
-    }
-}
-
-export interface IMetaHandler
-{
-    getFilesAsync(): Promise<Array<TAdvancedFile>>
-}
-
+/**
+ * the MetaHandler handles on file import and creation the meta file.
+ */
 export class MetaHandler
 {
-    metaData:MetaFile;
-    plugin: UnivresityPlugin;
-    app: App;
-    path: string;
+    //#region Properties
+    protected metaData:MetaFile;
+    protected plugin: UnivresityPlugin;
+    protected app: App;
+    protected path: string;
+    //#endregion
     constructor(app: App,plugin: UnivresityPlugin)
     {
         this.app = app;
@@ -124,18 +28,29 @@ export class MetaHandler
         this.setDefaultMeta();
     }
 
-    async setPath(path: string)
+    /**
+     * Sets the path where the meta file will be saved.
+     * @param path 
+     */
+    public async setPath(path: string)
     {
         this.path = path;
         await this.readMetaAsync();
     }
-
-    async createFileAsync() : Promise<string|null>
+    
+    /**
+     * Template to create a file in the over the method 'setPath' given path.
+     * @returns 
+     */
+    public async createFileAsync() : Promise<string|null>
     {
         return null;
     }
 
-    async saveMetaAsync()
+    /**
+     * Saves the Meta file at the set path.
+     */
+    protected async saveMetaAsync()
     {
         console.log(this.metaData);
         const raw = JSON.stringify(this.metaData);
@@ -143,7 +58,7 @@ export class MetaHandler
         
         const vault = this.app.vault;
 
-        const path = this._getMetaPath();
+        const path = this.getMetaPath();
         
         const file = vault.getFileByPath(path);
 
@@ -159,10 +74,13 @@ export class MetaHandler
         }
 
     }
-
-    async readMetaAsync()
+    
+    /**
+     * Reads and load the meta file from the set path.
+     */
+    protected async readMetaAsync()
     {
-        const path = this._getMetaPath();
+        const path = this.getMetaPath();
 
         if (await this.app.vault.adapter.exists(path))
         {
@@ -181,27 +99,39 @@ export class MetaHandler
         }
     }
 
-    _getMetaPath() : string
+    /**
+     * Returns the meta file path.
+     * @returns 
+     */
+    private getMetaPath() : string
     {
         return `${this.path}/${METADATA_FILE}`;
     }
 
-    getPath(file: string) : string
+    /**
+     * Returns the path with the given file.
+     */
+    protected getPath(file: string) : string
     {
         return `${this.path}/${file}`;
     }
 
-    // setDefaultMeta()
-    // {
-    //     // this.metaData = {};
-    // }
-    
-    async getFilesAsync(): Promise<Array<TAdvancedFile>>
+    /**
+     * Template for requesting files.
+     * @returns 
+     */
+    public async getFilesAsync(): Promise<Array<TAdvancedFile>>
     {
         return [];
     }
 
-    async openFileInEditor(path: string, replaceLeaf: boolean = true) : Promise<boolean>
+    /**
+     * Opens the given file path in the main view (text editor).
+     * @param path 
+     * @param replaceLeaf true = replacing the currently active content | false = opens the file in a new tab.
+     * @returns 
+     */
+    public async openFileInEditor(path: string, replaceLeaf: boolean = true) : Promise<boolean>
     {
         const file = this.app.vault.getFileByPath(path);
         if (!file || !(file instanceof TFile))
@@ -224,7 +154,14 @@ export class MetaHandler
         return true;
     }
 
-    async importFile(path: string, label: string) : Promise<string|null>
+    /**
+     * This method do not realy import a file. It is called by the importer to add the imported file to the meta file.
+     * This is currently only for meta purposes.
+     * @param path 
+     * @param label 
+     * @returns 
+     */
+    public async importFile(path: string, label: string) : Promise<string|null>
     {
         let file = this.app.vault.getFileByPath(path)
         if (file)
@@ -245,21 +182,10 @@ export class MetaHandler
         return null;
     }
 
-    _getAbsoluteFolderPath(): string | null
-    {
-        let basePath: string;
-        let adapter = this.app.vault.adapter;
-        if (adapter instanceof FileSystemAdapter)
-        {
-            basePath = adapter.getBasePath();
-            return path.join(basePath, this.path);
-        }
-        return null;
-    }
-
-
-    setDefaultMeta(): void {
+    /**
+     * Set the default meta data content.
+     */
+    protected setDefaultMeta(): void {
         this.metaData = new MetaFile();
-        console.log("Hi + ", this.metaData);
     }
 }

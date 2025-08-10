@@ -1,6 +1,7 @@
 import UnivresityPlugin from "main";
 import { App } from "obsidian";
-import { MetaHandler, TAdvancedFile } from "./metaHandler";
+import { MetaHandler } from "./metaHandler";
+import { TAdvancedFile } from "./metafile";
 
 export class LecutreFileCreator extends MetaHandler
 {

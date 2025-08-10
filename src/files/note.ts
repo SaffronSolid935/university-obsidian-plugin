@@ -1,7 +1,8 @@
 
 import UnivresityPlugin from "main";
-import { IMetaFile, MetaFile, MetaHandler, TAdvancedFile } from "./metaHandler";
+import {MetaHandler} from "./metaHandler";
 import { App } from "obsidian";
+import { MetaFile, TAdvancedFile } from "./metafile";
 
 
 
@@ -13,7 +14,7 @@ export class NoteFileCreator extends MetaHandler
         super(app, plugin);
     }
 
-    async createFileAsync(): Promise<string|null> 
+    public async createFileAsync(): Promise<string|null> 
     {
         const date = new Date();
         
@@ -25,7 +26,7 @@ export class NoteFileCreator extends MetaHandler
             
             const content  =
 `---
-Timestamp: ${date.toLocaleDateString(this.plugin.settings.timeformat)}
+Timestamp: ${date.toLocaleDateString(this.getLocale())}
 Semester: ${this.plugin.settings.currentSemester + 1}
 Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][this.plugin.settings.lastSelectedModuleIndex]}
 ---
@@ -55,7 +56,7 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
         return path;
     }
 
-    async getFilesAsync(): Promise<Array<TAdvancedFile>>
+    public async getFilesAsync(): Promise<Array<TAdvancedFile>>
     {
         await this.readMetaAsync();
         console.log(this.setDefaultMeta);
@@ -67,7 +68,11 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
         return this.metaData.files;
     }
 
-    _getLocale() : string
+    /**
+     * Request the locale time format.
+     * @returns 
+     */
+    private getLocale() : string
     {
         const locale = this.plugin.settings.timeformat;
         if (NoteFileCreator.validateLocale(locale))
@@ -78,12 +83,21 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
         return NoteFileCreator.getDefaultLocale();
     }
 
-    static getDefaultLocale() : string
+    /**
+     * Returns a default locale time format.
+     * @returns 
+     */
+    private static getDefaultLocale() : string
     {
         return 'en-EN'
     }
 
-    static validateLocale(locale: string) : boolean
+    /**
+     * Validates the locale time format.
+     * @param locale 
+     * @returns 
+     */
+    private static validateLocale(locale: string) : boolean
     {
         var localeResult = Intl.DateTimeFormat.supportedLocalesOf([locale]);
         if (localeResult == null || localeResult.length == 0 || localeResult.length > 1)

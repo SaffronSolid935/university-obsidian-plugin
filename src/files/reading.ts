@@ -1,4 +1,5 @@
-import { MetaHandler, TAdvancedFile } from "./metaHandler";
+import { TAdvancedFile } from "./metafile";
+import { MetaHandler } from "./metaHandler";
 
 export class ReadingFileCreator extends MetaHandler
 {
