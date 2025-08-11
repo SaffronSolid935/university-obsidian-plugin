@@ -3,7 +3,7 @@
 	"name": "Saffron's University plugin",
 	"version": "1.0.0",
 	"minAppVersion": "1.8.10",
-	"description": "This plugin allows the user, to create faster notes for university with a specific schema.",
+	"description": "This plugin allows the user, to create faster notes for university with a specific scheme.",
 	"author": "SaffronSolid935",
 	"authorUrl": "https://github.com/SaffronSolid935/",
 	"isDesktopOnly": true
