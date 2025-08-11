@@ -1,7 +1,7 @@
 {
 	"name": "saffron-university",
 	"version": "1.0.0",
-	"description": "This plugin allows the user, to create faster notes for university with a specific schema.",
+	"description": "This plugin allows the user, to create faster notes for university with a specific scheme.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
