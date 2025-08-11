@@ -4,7 +4,7 @@
 
 ### Automatic
 
-> **Note:** Automatic updates are not guaranteed, but updating is easy.
+> **Note:** The package will not be updated automatically. You have update it over the community plugins settings.
 
 1. Open the obsidian vault, where you want to install the plugin.
 2. Go to `Settings > Community plugins`
