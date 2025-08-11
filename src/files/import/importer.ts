@@ -1,7 +1,7 @@
 import { MetaHandler } from "src/files/metaHandler";
 import { writeFile } from "fs/promises";
 import UnivresityPlugin from "main";
-import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, Workspace, WorkspaceLeaf } from "obsidian";
 
 /**
  * Default file importert view id.
@@ -137,6 +137,10 @@ export class ImporterPopUpView extends ItemView
             {
                 this.file = input.files.item(0)!;
                 this.askOpenFileButton.innerText = this.file.name!;
+            }
+            else
+            {
+                new Notice('Select a file to import');
             }
             input.remove();
         };

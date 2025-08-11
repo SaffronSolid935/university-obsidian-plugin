@@ -194,7 +194,6 @@ export class UniversityView extends ItemView
 
         await this.generateNavBar(container);
 
-        console.log("Doc: " + this.currentDocumentSection);
         let sectionPath;
         switch (this.currentDocumentSection)
         {
@@ -206,7 +205,17 @@ export class UniversityView extends ItemView
 
                     if (path)
                     {
-                        const opened = await this.plugin.noteFileCreator.openFileInEditor(path)
+                        const opened = await this.plugin.noteFileCreator.openFileInEditor(path);
+                        if (!opened)
+                        {
+                            console.log('Error while opening note (301)');
+                            new Error('Error while opening note (301)');
+                        }
+                    }
+                    else
+                    {
+                        console.log('Could not create note (300)');
+                        new Error('Could not create note (300)');
                     }
                     this.onOpen();
                 });
@@ -238,7 +247,10 @@ export class UniversityView extends ItemView
                         workspace.revealLeaf(leaf);
                     }
                     else
-                        new Notice('Error');
+                    {
+                        console.log('Error on opening importer (302a)');
+                        new Notice('Error on opening importer (302a)');
+                    }
                 });
                 break;
             case DocumentSection.Readings:
@@ -266,7 +278,10 @@ export class UniversityView extends ItemView
                         workspace.revealLeaf(leaf);
                     }
                     else
-                        new Notice('Error');
+                    {
+                        console.log('Error on opening importer (302b)');
+                        new Notice('Error on opening importer (302b)');
+                    }
                 });
                 break;
         }
@@ -293,8 +308,8 @@ export class UniversityView extends ItemView
                 var opened = await fileCreator.openFileInEditor(value.path);
                 if (!opened)
                 {
-                    console.error(`File ${value.path} not found (code: 204).`);
-                    new Notice(`File '${value.name}' not found (204).`);
+                    console.error(`File ${value.path} not found (303a).`);
+                    new Notice(`File '${value.name}' not found (303a).`);
                 }
             });
 
@@ -304,8 +319,8 @@ export class UniversityView extends ItemView
                     var opened = await fileCreator.openFileInEditor(value.path, false);
                     if (!opened)
                     {
-                        console.error(`File ${value.path} not found (code: 204b).`);
-                        new Notice(`File '${value.name}' not found (204b).`);
+                        console.error(`File ${value.path} not found (code: 303b).`);
+                        new Notice(`File '${value.name}' not found (303b).`);
                     }
                 }
             });

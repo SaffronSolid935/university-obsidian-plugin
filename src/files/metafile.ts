@@ -29,12 +29,10 @@ export class MetaFile implements IMetaFile
     {
         let metaData = new MetaFile();
         metaData.files = data.files;
-        console.log(metaData);
         for (let i = 0; i < metaData.files.length; i++)
         {
             metaData.files[i].date = new Date(metaData.files[i].date);
         }
-        console.log(metaData);
         return metaData;
     }
 

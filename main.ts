@@ -99,7 +99,7 @@ export default class UnivresityPlugin extends Plugin
         if (leaf != null)
             workspace.revealLeaf(leaf);
         else
-            new Notice('Error');
+            new Notice('Error creating University View (100)');
     }
 
     /**

@@ -52,17 +52,13 @@ export class MetaHandler
      */
     protected async saveMetaAsync()
     {
-        console.log(this.metaData);
         const raw = JSON.stringify(this.metaData);
-        console.log(raw);
         
         const vault = this.app.vault;
 
         const path = this.getMetaPath();
         
         const file = vault.getFileByPath(path);
-
-        console.log(`Meta: ${path} - ${file}`);
         
         if (!(await vault.adapter.exists(path)))
         {
@@ -85,7 +81,6 @@ export class MetaHandler
         if (await this.app.vault.adapter.exists(path))
         {
             const file = this.app.vault.getFileByPath(path);
-            console.log(`file: ${file}`);
             if (file && file instanceof TFile)
             {
                 const raw = await this.app.vault.read(file);
@@ -167,7 +162,6 @@ export class MetaHandler
         if (file)
         {
             await this.readMetaAsync();
-            console.log(file.path);
             
             let metaDataFile = new TAdvancedFile(file);
             metaDataFile.label = label;

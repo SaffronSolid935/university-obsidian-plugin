@@ -1,13 +1,22 @@
 # Error codes
 
-## Main.ts (`1XX`)
+## Main.ts (`1XX`) | Plugin
 
-## View.ts (`2XX`)
+| Code | Description                      |
+| ---- | -------------------------------- |
+| 100  | Couldn't create university view. |
 
-| Code | Description |
-| ---- | ----------- |
-| 201  | File already exists. |
-| 201  | File could not be created. Return value is null. |
-| 201b | Error with the file path |
-| 204 | File not found | 
-| 204b | File not found while trying to open in a new tab | 
+## src/settings.ts (`2XX`) | Settings Tab
+
+`No error handling yet.`
+
+## src/view.ts (`3XX`) | University View
+
+| Code | Description                         |
+| ---- | ----------------------------------- |
+| 300  | Note could not be created           |
+| 301  | Note could not be opened            |
+| 302a | Could not open lecture importer     |
+| 302b | Could not open reading importer     |
+| 303a | Could not open file in the same tab |
+| 303b | Could not open file in another tab  |

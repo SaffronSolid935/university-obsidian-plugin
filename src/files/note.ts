@@ -1,7 +1,7 @@
 
 import UnivresityPlugin from "main";
 import {MetaHandler} from "./metaHandler";
-import { App } from "obsidian";
+import { App, Notice } from "obsidian";
 import { MetaFile, TAdvancedFile } from "./metafile";
 
 
@@ -34,23 +34,21 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
             await this.app.vault.create(path,content);
             
             let abstractFile = this.app.vault.getFileByPath(path);
-            console.log("Not File: " + path + " - " + abstractFile);
             if (abstractFile)
             {
-                console.log("1");
                 let file: TAdvancedFile = new TAdvancedFile(abstractFile);
-                console.log("2");
                 const rawLabel = date.toLocaleDateString(this.plugin.settings.timeformat);
                 file.label = rawLabel;
                 file.date = date;
                 file.setIndexByPreIndex(this.metaData.getHighestIndex());
-                console.log("3");
                 this.metaData.files.push(file);
-                console.log("4");
                 
                 await this.saveMetaAsync();
-                console.log("5");
             }
+        }
+        else
+        {
+            new Notice('Info: file already exists.');
         }
 
         return path;
@@ -59,9 +57,6 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
     public async getFilesAsync(): Promise<Array<TAdvancedFile>>
     {
         await this.readMetaAsync();
-        console.log(this.setDefaultMeta);
-        console.log("Meta: ", this.metaData);
-        console.log("Meta2: ", typeof(this.metaData));
         
         this.metaData.sortByDate();
 
