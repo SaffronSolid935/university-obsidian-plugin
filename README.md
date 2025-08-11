@@ -11,7 +11,7 @@
 3. Activate the community plugins if not done yet.
 4. Search for `Saffron'S University Plugin` and install it.
 
-### Manual (no auto update)
+### Manual (will be changed by a better method)
 
 > Important: `Node.js` (`npm`) must be installed. <br>
 > Not recommended for development. See the [development section](#development).
