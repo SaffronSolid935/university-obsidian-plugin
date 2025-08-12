@@ -1,4 +1,15 @@
-# University (obsidian plugin)
+# Saffron's University Plugin (for obsidian)
+
+This is a plugin for the note‑taking app [Obsidian](https://obsidian.md/).
+
+It helps you manage your university notes more efficiently by:
+
+- simplifying the creation and organization of your note files,
+- providing an easy way to import lecture and reading materials so you can open them instantly,
+- automatically managing your folder structure to keep everything organized.
+
+With this plugin, your study materials are always structured, easy to find, and quick to access.
+
 
 ## Installation
 
