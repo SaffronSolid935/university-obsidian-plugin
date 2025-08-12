@@ -1,9 +1,9 @@
 {
 	"id": "saffron-university",
-	"name": "Saffron's University plugin",
+	"name": "Saffron's University Tool",
 	"version": "1.0.0",
 	"minAppVersion": "1.8.10",
-	"description": "This plugin allows the user, to create faster notes for university with a specific scheme. (For help go to the plugin-settings > Open documentation)",
+	"description": "This Tool allows the user, to create faster notes for university with a specific scheme. (For help go to the Tool-settings > Open documentation)",
 	"author": "SaffronSolid935",
 	"authorUrl": "https://github.com/SaffronSolid935/",
 	"isDesktopOnly": true

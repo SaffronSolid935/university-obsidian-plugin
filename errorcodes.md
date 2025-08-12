@@ -1,6 +1,6 @@
 # Error codes
 
-## Main.ts (`1XX`) | Plugin
+## Main.ts (`1XX`) | Tool
 
 | Code | Description                      |
 | ---- | -------------------------------- |

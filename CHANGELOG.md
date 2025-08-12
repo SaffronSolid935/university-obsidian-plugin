@@ -2,7 +2,7 @@
 
 ## 1.0.0 - 2025-08-12
 ### Added
-- Initial public release of **Saffron's University Plugin**.
+- Initial public release of **Saffron's University Tool**.
 - **Core functionality:**
   - Automatic creation of structured university notes.
   - Easy import of lecture materials.
