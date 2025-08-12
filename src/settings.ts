@@ -76,6 +76,17 @@ export class UniversitySettingsTab extends PluginSettingTab {
         containerEl.empty();
 
         new Setting(containerEl)
+            .setName('Help & Documentation')
+            .setDesc('Click the link to visit the documentation page.')
+            .addButton(button => {
+                button.setButtonText('Open documentation')
+                    .setCta()
+                    .onClick(()=>{
+                        window.open('https://github.com/SaffronSolid935/university-obsidian-plugin/blob/main/USAGE.md')
+                    });
+            });
+
+        new Setting(containerEl)
             .setName('Locale')
             .setDesc('This is used for the date- & timeformat.')
             .addText(text => text
@@ -89,7 +100,7 @@ export class UniversitySettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Semesters')
-            .setDesc('The number of semesters you have')
+            .setDesc('The number of semesters you have.')
             .addText(text => text
                 .setPlaceholder('6')
                 .setValue(this.plugin.settings.semesters.toString())
