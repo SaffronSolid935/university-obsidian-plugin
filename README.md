@@ -1,5 +1,7 @@
 # Saffron's University Plugin (for obsidian)
 
+> Disclaimer: This plugin only accesses files outside the Obsidian vault that the user explicitly selects for import. The selected file is then saved into the vault.
+
 This is a plugin for the note‑taking app [Obsidian](https://obsidian.md/).
 
 It helps you manage your university notes more efficiently by:
