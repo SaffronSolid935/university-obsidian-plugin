@@ -1,4 +1,9 @@
 
+.university-hidden-file-input
+{
+    display: none;
+}
+
 .university-importer-item
 {
     display: block;

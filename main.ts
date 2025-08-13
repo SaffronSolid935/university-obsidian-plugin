@@ -51,7 +51,7 @@ export default class UnivresityPlugin extends Plugin
         this.addRibbonIcon('graduation-cap','University',(evt) => this.openSidebar());
         // ribbonIcon.addClass('my-plugin-ribbon-class');
 
-        var settingsTab = new UniversitySettingsTab(this.app,this,this.saveSettings.bind(this));
+        let settingsTab = new UniversitySettingsTab(this.app,this,this.saveSettings.bind(this));
 
         this.addSettingTab(settingsTab);
     }

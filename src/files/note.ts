@@ -94,7 +94,7 @@ Module: ${this.plugin.settings.modules[this.plugin.settings.currentSemester][thi
      */
     private static validateLocale(locale: string) : boolean
     {
-        var localeResult = Intl.DateTimeFormat.supportedLocalesOf([locale]);
+        let localeResult = Intl.DateTimeFormat.supportedLocalesOf([locale]);
         if (localeResult == null || localeResult.length == 0 || localeResult.length > 1)
         {
             return false;

@@ -168,7 +168,7 @@ export class UniversityView extends ItemView
             this.generateSemesterOptions();
         }
         
-        var semesterCombobox = await this.generateSelection(
+        let semesterCombobox = await this.generateSelection(
             container,
             'semester-select',
             this.semesterOptions,
@@ -182,7 +182,7 @@ export class UniversityView extends ItemView
 
         let moduleList = this.plugin.settings.modules[this.plugin.settings.currentSemester]
         
-        var moduleCombobox = await this.generateSelection(
+        let moduleCombobox = await this.generateSelection(
             container,
             'module-select',
             moduleList,
@@ -305,7 +305,7 @@ export class UniversityView extends ItemView
         files.forEach((value)=>{
             let button = div.createEl('button',{text:value.label});
             button.addEventListener('click',async ()=>{
-                var opened = await fileCreator.openFileInEditor(value.path);
+                let opened = await fileCreator.openFileInEditor(value.path);
                 if (!opened)
                 {
                     console.error(`File ${value.path} not found (303a).`);
@@ -316,7 +316,7 @@ export class UniversityView extends ItemView
             button.addEventListener('mouseup',async (event)=>{
                 if (event.button === 1)
                 {
-                    var opened = await fileCreator.openFileInEditor(value.path, false);
+                    let opened = await fileCreator.openFileInEditor(value.path, false);
                     if (!opened)
                     {
                         console.error(`File ${value.path} not found (code: 303b).`);
@@ -405,7 +405,7 @@ export class UniversityView extends ItemView
     
     private generateSemesterOptions()
     {
-        for (var i = 0; i < this.plugin.settings.semesters; i++)
+        for (let i = 0; i < this.plugin.settings.semesters; i++)
         {
             this.semesterOptions.push(`Semester ${i + 1}`);
         }
@@ -444,7 +444,7 @@ export class UniversityView extends ItemView
      */
     private getNavbarItem(id: string):INavbarData | null
     {
-        for (var i = 0; i < this.navbarData.length; i++)
+        for (let i = 0; i < this.navbarData.length; i++)
         {
             if (this.navbarData[i].id == id)
             {

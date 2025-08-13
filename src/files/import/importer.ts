@@ -130,7 +130,7 @@ export class ImporterPopUpView extends ItemView
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = types;
-        input.style.display = 'none';
+        input.addClass('university-hidden-file-input');
 
         input.onchange = () => {
             if (input.files && input.files.length > 0)
