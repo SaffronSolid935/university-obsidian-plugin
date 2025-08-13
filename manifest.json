@@ -1,7 +1,7 @@
 {
 	"id": "saffron-university",
 	"name": "Saffron's University Tool",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.8.10",
 	"description": "This Tool allows the user, to create faster notes for university with a specific scheme. (For help go to the Tool-settings > Open documentation)",
 	"author": "SaffronSolid935",

@@ -1,6 +1,6 @@
 {
 	"name": "saffron-university",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This Tool allows the user, to create faster notes for university with a specific scheme.",
 	"main": "main.js",
 	"scripts": {
