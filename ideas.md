@@ -1,0 +1,2 @@
+- Moving modules with drag and drop or up down buttons (even between semesters)
+- Removing modules with a button click next to meodule
